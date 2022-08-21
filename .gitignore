@@ -1,0 +1,28 @@
+react-main/dist
+react-main/node_modules
+react-main/.env
+react-main/RecycleBin
+Server/dist
+Server/node_modules
+Server/.env
+# Gradle
+.gradle
+JUnit/JUnit_Autograder/build/
+
+# Ignore Gradle GUI config
+JUnit/JUnit_Autograder/gradle-app.setting
+
+# Eclipse
+JUnit/JUnit_Autograder/.classpath
+JUnit/JUnit_Autograder/.settings/
+JUnit/JUnit_Autograder/.project
+JUnit/JUnit_Autograder/bin/
+
+# IntelliJ
+JUnit/JUnit_Autograder/.idea
+JUnit/JUnit_Autograder/*.iml
+JUnit/JUnit_Autograder/*.ipr
+JUnit/JUnit_Autograder/*.iws
+
+# Misc
+JUnit/JUnit_Autograder/*.log

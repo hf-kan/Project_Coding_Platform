@@ -1,0 +1,11 @@
+@import '~antd/dist/antd.css';
+.logo {
+    margin: 0px 30px 0px 16px;
+    float:left;
+    max-height: 64px;
+    width:auto;
+    background-color:aliceblue
+}
+.userName {
+    float:right;
+}
