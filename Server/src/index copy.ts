@@ -2,7 +2,7 @@
 import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import UserModel from './models/UserModel';
+import UserModel from './models/userModel';
 // import msAuthApp from './app/msAuthApp';
 
 import { connectDB } from './lib/dbConnect';

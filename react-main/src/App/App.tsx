@@ -7,14 +7,17 @@ import HeadPanel from './Header';
 import HomepageContent from './components/HomepageContent';
 import { getUserRole } from '../lib/services';
 import Admin from './components/admin';
+import Student from './components/StudentMain';
+import StudentListModuleAssignment from './components/StudentListModuleAssignment';
 
 const { Header, Content } = Layout;
 
-class App extends Component <{}, { role: string[] }> {
+class App extends Component <{}, { role: string[], username: string }> {
   constructor(props:any) {
     super(props);
     this.state = {
       role: [],
+      username: '',
     };
   }
 
@@ -22,12 +25,14 @@ class App extends Component <{}, { role: string[] }> {
     getUserRole('andykan016@gmail.com', (userRole: string[]) => {
       this.setState({
         role: userRole,
+        username: 'andykan016@gmail.com',
       });
     });
   }
 
   render() {
-    const { role } = this.state;
+    const { role, username } = this.state;
+    const studentProps = { username };
     return (
       <Router>
         <Layout className="layout">
@@ -58,6 +63,10 @@ class App extends Component <{}, { role: string[] }> {
                 <Route path="/admin">
                   <Admin />
                 </Route>
+                <Route path="/student">
+                  <Student {...studentProps} />
+                </Route>
+                <Route path="/assignmentList/:key" component={StudentListModuleAssignment} />
               </Switch>
             </div>
           </Content>
@@ -66,5 +75,5 @@ class App extends Component <{}, { role: string[] }> {
     );
   }
 }
-
+// render={(routeProps) => (<StudentListModuleAssignment {...routeProps} />)}
 export default App;

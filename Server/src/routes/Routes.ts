@@ -1,7 +1,7 @@
 import express from 'express';
 
-import UserModel from '../models/UserModel';
-import ModuleModel from '../models/ModulesModel';
+import UserModel from '../models/userModel';
+import Module from '../models/modulesModel';
 
 const router = express.Router();
 
@@ -59,7 +59,7 @@ router.get('/users', async (request, response) => {
 });
 
 router.get('/modules', async (request, response) => {
-  const users = await ModuleModel.find({});
+  const users = await Module.find({});
   try {
     response.send(module);
   } catch (error) {

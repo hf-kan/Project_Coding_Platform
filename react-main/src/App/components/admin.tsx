@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import {
   PageHeader, Button, Input, Select,
 } from 'antd';
 
 import { addNewModule, getAllTerm } from '../../lib/adminServices';
 
-function sendModuletoDB() {
-  const message: any = { moduleId: document.getElementById('mcode'), name: document.getElementById('mname'), term: document.getElementById('term') };
-  addNewModule(message);
-}
+class App extends Component
+<{}, { termItems:any[], modCode:string, modName:string, modTerm:string }> {
+  constructor(props:any) {
+    super(props);
+    this.state = {
+      termItems: [],
+      modCode: '',
+      modName: '',
+      modTerm: '',
+    };
+  }
 
-function MyComponent() {
-  const [termsItems, setTermItems] = useState([]);
-
-  useEffect(() => {
+  componentDidMount() {
     const setOptionItems = async () => {
       const output: any = [];
       getAllTerm((data:any) => {
@@ -21,38 +25,65 @@ function MyComponent() {
           const { Option } = Select;
           output.push(<Option key={item._id} value={item._id}>{`${item.year} ${item.term}`}</Option>);
         });
-        setTermItems(output);
+        this.setState({
+          termItems: output,
+        });
       });
     };
     setOptionItems().catch(console.error);
-  });
+  }
 
-  const Titles: String = 'Admin Page';
-  return (
-    <div>
-      <PageHeader
-        className="site-page-header"
-        title={Titles}
-      />
-      <br />
-      <Button style={{ marginLeft: 20 }} type="primary"> Click to add test user</Button>
-      <br />
-      <br />
-      <Input id="mcode" placeholder="Module code" allowClear />
-      <br />
-      <br />
-      <Input id="mname" placeholder="Module name" allowClear />
-      <br />
-      <br />
-      <Input.Group compact>
-        <Select id="term">
-          {termsItems}
-        </Select>
-      </Input.Group>
-      <br />
-      <Button style={{ marginLeft: 20 }} type="primary" onClick={sendModuletoDB}>Click to add test module</Button>
-    </div>
-  );
+  handleCodeChange = (event:any) => {
+    this.setState({ modCode: event.target.value });
+  };
+
+  handleNameChange = (event:any) => {
+    this.setState({ modName: event.target.value });
+  };
+
+  handleTermChange = (value:string) => {
+    this.setState({ modTerm: value });
+  };
+
+  handleModuleSubmit = () => {
+    const { modCode, modName, modTerm } = this.state;
+    const message: any[] = [{
+      moduleId: modCode,
+      name: modName,
+      term: modTerm,
+    }];
+    addNewModule(message);
+  };
+
+  render() {
+    const {
+      termItems, modCode, modName, modTerm,
+    } = this.state;
+    return (
+      <div>
+        <PageHeader
+          className="site-page-header"
+          title="Admin Page"
+        />
+        <br />
+        <Button style={{ marginLeft: 20 }} type="primary"> Click to add test user</Button>
+        <br />
+        <br />
+        <Input id="mcode" value={modCode} onChange={this.handleCodeChange} placeholder="Module code" allowClear />
+        <br />
+        <br />
+        <Input id="mname" value={modName} onChange={this.handleNameChange} placeholder="Module name" allowClear />
+        <br />
+        <br />
+        <Input.Group compact>
+          <Select id="term" value={modTerm} onChange={this.handleTermChange}>
+            {termItems}
+          </Select>
+        </Input.Group>
+        <br />
+        <Button style={{ marginLeft: 20 }} type="primary" onClick={this.handleModuleSubmit}>Click to add test module</Button>
+      </div>
+    );
+  }
 }
-
-export default MyComponent;
+export default App;

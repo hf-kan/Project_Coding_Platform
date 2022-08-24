@@ -1,10 +1,8 @@
 import mongoose from 'mongoose';
-import termSchema from './termModel';
 
 const ModuleSchema = new mongoose.Schema({
   moduleId: {
     type: String,
-    required: true,
   },
   name: {
     type: String,
@@ -14,6 +12,6 @@ const ModuleSchema = new mongoose.Schema({
   },
 });
 
-const Module = mongoose.model('Module', ModuleSchema);
+const moduleModel = mongoose.model('modules', ModuleSchema, 'modules');
 
-export default Module;
+export default moduleModel;

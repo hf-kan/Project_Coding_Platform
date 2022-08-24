@@ -9,14 +9,6 @@ const AssignmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  year: {
-    type: String,
-    required: true,
-  },
-  term: {
-    type: String,
-    required: true,
-  },
   descr: {
     type: String,
     required: true,
@@ -37,6 +29,6 @@ const AssignmentSchema = new mongoose.Schema({
   },
 });
 
-const Assignment = mongoose.model('assignment', AssignmentSchema);
+const Assignment = mongoose.model('assignments', AssignmentSchema, 'assignments');
 
 export default Assignment;

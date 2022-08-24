@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import UserModel from './models/userModel';
 import termModel from './models/termModel';
-import ModulesModel from './models/modulesModel';
+import ModuleModel from './models/modulesModel';
+import AssignmentModel from './models/assignmentModel';
 // import msAuthApp from './app/msAuthApp';
 
 import { connectDB } from './lib/dbConnect';
@@ -14,6 +15,7 @@ dotenv.config();
 const PORT = parseInt(process.env.SERVER_PORT as string, 10);
 const app: Application = express();
 const router = express.Router();
+const getOption: any = { sanitizeFilter: true };
 
 // Body parsing Middleware
 app.use(express.json());
@@ -25,7 +27,8 @@ app.use(bodyParser.json());
 
 app.all('/*', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization');
   next();
 });
 
@@ -48,26 +51,39 @@ app.post(
 
 app.post('/add_user', async (request, response) => {
   const user = new UserModel(request.body);
+  await user.save().then(
+    (savedDoc) => { response.status(200).send(savedDoc); },
+  ).catch(
+    (error) => { response.status(500).send(error); },
+  );
+});
+
+app.get('/assignment/module/:moduleKey', async (request, response) => {
   try {
-    await user.save();
-    response.send(user);
+    AssignmentModel.find({ module: request.params.moduleKey }).exec().then((data) => {
+      if (!data) {
+        response.status(404).send({
+          message: 'not found',
+        });
+      } else response.send(data);
+    });
   } catch (error) {
     response.status(500).send(error);
   }
 });
 
-app.post('/module/add', async (request, response) => {
-  const module = new ModulesModel({
-    moduleId: request.body.moduleId,
-    name: request.body.name,
-    term: request.body.term,
+app.post('/modules/add', async (request, response) => {
+  const { moduleId, name, term } = request.body[0];
+  const newModule = new ModuleModel({
+    moduleId,
+    name,
+    term,
   });
-  try {
-    await module.save();
-    response.status(200).send(module);
-  } catch (error) {
-    response.status(500).send(error);
-  }
+  await newModule.save().then(
+    (savedDoc:any) => { response.status(200).send(savedDoc); },
+  ).catch(
+    (error:any) => { response.status(500).send(error); },
+  );
 });
 
 app.get('/modules', async (request, response) => {
@@ -84,9 +100,31 @@ app.get('/modules', async (request, response) => {
   }
 });
 
+app.get('/modules/query', async (request, response) => {
+  try {
+    ModuleModel.find(
+      { _id: request.query.ObjectId },
+    ).setOptions(
+      getOption,
+    ).exec().then((data) => {
+      if (!data) {
+        response.status(404).send({
+          message: 'not found',
+        });
+      } else response.send(data);
+    });
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
 app.get('/users/:user', async (request, response) => {
   try {
-    UserModel.find({ username: request.params.user }).exec().then((data) => {
+    UserModel.find(
+      { username: request.params.user },
+    ).setOptions(
+      getOption,
+    ).exec().then((data) => {
       if (!data) {
         response.status(404).send({
           message: 'not found',
@@ -101,6 +139,24 @@ app.get('/users/:user', async (request, response) => {
 app.get('/terms', async (request, response) => {
   try {
     termModel.find({}).exec().then((data) => {
+      if (!data) {
+        response.status(404).send({
+          message: 'not found',
+        });
+      } else response.send(data);
+    });
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
+app.get('/terms/query', async (request, response) => {
+  try {
+    termModel.find(
+      { _id: request.query.ObjectId },
+    ).setOptions(
+      getOption,
+    ).exec().then((data) => {
       if (!data) {
         response.status(404).send({
           message: 'not found',

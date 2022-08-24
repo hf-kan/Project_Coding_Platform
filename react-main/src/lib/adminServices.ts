@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 function addNewModule(module:object) {
-  axios.post('http://localhost:8080/module/add', module)
+  axios.post('http://localhost:8080/modules/add', module)
     .then((res) => {
       if (res.status === 200) {
-        console.log('add module OK');
+        console.log(res.data);
       } else {
         console.log(`${res.status}: ${res.data}`);
       }

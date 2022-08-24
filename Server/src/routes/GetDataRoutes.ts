@@ -1,7 +1,7 @@
 import express from 'express';
 
-import UserModel from '../models/UserModel';
-import ModuleModel from '../models/ModulesModel';
+import UserModel from '../models/userModel';
+import ModuleModel from '../models/modulesModel';
 import { connectDB, disconnectDB } from '../lib/dbConnect';
 
 const router = express.Router();
