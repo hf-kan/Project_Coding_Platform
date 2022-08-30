@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'antd';
+import { useMsal } from '@azure/msal-react';
+
+import { loginRequest } from '../../lib/authConfig';
 
 import '../css/App.css';
 
@@ -8,8 +11,15 @@ interface Props {
   role: string[],
 }
 
+function handleLogout(instance:any) {
+  instance.logoutRedirect(loginRequest).catch((e:any) => {
+    console.error(e);
+  });
+}
+
 function MyComponent(props: Props) {
   const { role } = props;
+  const { instance } = useMsal();
   const menuItems:any = [
     <Menu.Item key="1">
       <Link to="/" />
@@ -40,6 +50,12 @@ function MyComponent(props: Props) {
       );
     }
   }
+  menuItems.push(
+    <Menu.Item key="0" onClick={() => handleLogout(instance)}>
+      Sign Out
+    </Menu.Item>,
+  );
+
   return (
     <Menu
       className="Menu"

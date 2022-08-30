@@ -17,7 +17,10 @@ function handleLogin(instance:any) {
 function SignInButton() {
   const { instance } = useMsal();
   return (
-    <Button onClick={() => handleLogin(instance)} style={{ marginLeft: 20 }} type="primary">Sign in using redirect</Button>
+    <div>
+      <br />
+      <Button onClick={() => handleLogin(instance)} style={{ marginLeft: 20 }} size="large" type="primary">Sign in</Button>
+    </div>
   );
 }
 export default SignInButton;

@@ -1,8 +1,5 @@
+/*
 import React from 'react';
-
-/**
- * Renders information about the user obtained from Microsoft Graph
- */
 
 function ProfileData(props:any) {
   const { graphData } = props;
@@ -35,3 +32,4 @@ function ProfileData(props:any) {
 }
 
 export default ProfileData;
+*/

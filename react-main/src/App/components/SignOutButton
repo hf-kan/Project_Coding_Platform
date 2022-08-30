@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { useMsal } from '@azure/msal-react';
 import { Button } from 'antd';
@@ -10,14 +11,12 @@ function handleLogout(instance:any) {
   });
 }
 
-/**
- * Renders a button which, when selected, will open a popup for login
- */
-
 function SignOutButton() {
   const { instance } = useMsal();
   return (
-    <Button onClick={() => handleLogout(instance)} style={{ marginLeft: 20 }} type="primary">Sign out using Redirect</Button>
+    <Button onClick={() =>
+      handleLogout(instance)} style={{ marginLeft: 20 }} type="primary">Sign out</Button>
   );
 }
 export default SignOutButton;
+*/

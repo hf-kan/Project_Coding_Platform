@@ -26,3 +26,9 @@ JUnit/JUnit_Autograder/*.iws
 
 # Misc
 JUnit/JUnit_Autograder/*.log
+
+# TestRun Assignments
+TestRun/Assignments
+
+# AutoMarker Assignments
+AutoMarker/Assignments

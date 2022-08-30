@@ -20,4 +20,13 @@ function getAllTerm(callback: Function) {
     });
 }
 
-export { addNewModule, getAllTerm };
+function getAllModules(callback: Function) {
+  axios.get('http://localhost:8080/getAllModules')
+    .then((res) => {
+      const term = res.data;
+      const output = JSON.parse(JSON.stringify(term));
+      callback(output);
+    });
+}
+
+export { addNewModule, getAllTerm, getAllModules };

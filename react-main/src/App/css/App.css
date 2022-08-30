@@ -2,3 +2,8 @@
 .site-layout .site-layout-background {
     background: #fff;
   }
+.site-layout-content {
+  min-height: 280px;
+  padding: 12px;
+  background: #fff;
+}

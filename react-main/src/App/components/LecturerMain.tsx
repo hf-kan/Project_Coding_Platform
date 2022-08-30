@@ -33,12 +33,12 @@ class App extends Component
       // Get student's enrolled modules, then find details of each module
       // then get each module's term details
       // equivalent to studentmodules inner join modules inner join term
-      getStudentModules((username), (arrayOfStudentModuleIds:any[]) => {
-        getModulesById(arrayOfStudentModuleIds, (arrayOfModules:any[]) => {
+      getStudentModules((username), (arrayOfLecturerModuleIds:any[]) => {
+        getModulesById(arrayOfLecturerModuleIds, (arrayOfModules:any[]) => {
           const arrayOfTermIds: any[] = [];
           arrayOfModules.forEach((module:any) => arrayOfTermIds.push(module.term));
           getTermsById(arrayOfTermIds, (arrayOfTerms:any[]) => {
-            arrayOfStudentModuleIds.forEach((modId) => {
+            arrayOfLecturerModuleIds.forEach((modId) => {
               const module:any = arrayOfModules.find((obj) => obj._id === modId);
               const term:any = arrayOfTerms.find((obj) => obj._id === module.term);
               output.push({
@@ -87,7 +87,7 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/assignmentList/${username}/${record.key}`;
+          const path = `/lecturerAssignmentList/${username}/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">
@@ -102,7 +102,7 @@ class App extends Component
       <div>
         <PageHeader
           className="site-page-header"
-          title="Modules"
+          title="Modules (Lecturer)"
         />
         <br />
         <br />

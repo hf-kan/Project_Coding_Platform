@@ -1,0 +1,4 @@
+@import '~antd/dist/antd.css';
+.output-textArea{
+  width: 80%;
+}

@@ -6,6 +6,7 @@ import DisplayUser from './components/DisplayUser';
 
 interface Props {
   role: string[],
+  username: string,
 }
 
 function MyComponent(props: Props) {
@@ -14,7 +15,7 @@ function MyComponent(props: Props) {
     <div className="App">
       <img src={Logo} className="logo" alt="University of Birmingham" />
       <HeaderMenu role={role} />
-      <DisplayUser />
+      <DisplayUser {...props} />
     </div>
   );
 }

@@ -5,6 +5,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: String,
+  },
+  name: {
+    type: String,
+  },
   role: {
     type: [String],
   },

@@ -27,6 +27,12 @@ const AssignmentSchema = new mongoose.Schema({
   testCase: {
     type: Object,
   },
+  methodName: {
+    type: String,
+  },
+  skeletonCode: {
+    type: String,
+  },
 });
 
 const Assignment = mongoose.model('assignments', AssignmentSchema, 'assignments');

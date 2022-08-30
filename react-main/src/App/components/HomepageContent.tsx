@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageHeader, List, Button } from 'antd';
+import { PageHeader, List } from 'antd';
 import LoadUpcomingTest from './LoadUpcomingTest';
 
 type Test = {
@@ -25,8 +25,6 @@ function MyComponent() {
         dataSource={UpcomingTests}
         renderItem={(item) => <List.Item>{item.title}</List.Item>}
       />
-      <br />
-      <Button style={{ marginLeft: 20 }} type="primary">Click to add test user</Button>
     </div>
   );
 }

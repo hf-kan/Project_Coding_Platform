@@ -55,7 +55,6 @@ class App extends Component
 
   render() {
     const { assignmentData, moduleName } = this.state;
-    const { match } = this.props;
     const columns = [
       {
         title: 'Assignment',
@@ -81,11 +80,11 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/studentAssignment/${match.params.username}/${record.key}`;
+          const path = `/ViewStudentSubmissions/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">
-                <Link to={path}>Start Assignment</Link>
+                <Link to={path}>View Students Submissions</Link>
               </Button>
             </Space>
           );
@@ -96,7 +95,7 @@ class App extends Component
       <div>
         <PageHeader
           className="site-page-header"
-          title="Assignments"
+          title="Assignments (Lecturer)"
           subTitle={`${moduleName}`}
         />
         <br />

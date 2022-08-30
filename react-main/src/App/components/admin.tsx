@@ -3,6 +3,8 @@ import {
   PageHeader, Button, Input, Select,
 } from 'antd';
 
+import { Link } from 'react-router-dom';
+
 import { addNewModule, getAllTerm } from '../../lib/adminServices';
 
 class App extends Component
@@ -66,7 +68,15 @@ class App extends Component
           title="Admin Page"
         />
         <br />
-        <Button style={{ marginLeft: 20 }} type="primary"> Click to add test user</Button>
+        <Button
+          style={{ marginLeft: 20 }}
+          type="primary"
+        >
+          <Link to="/addAssignment">Add New Assignment</Link>
+        </Button>
+        <br />
+        <br />
+        <Button style={{ marginLeft: 20 }} type="primary">Add New User</Button>
         <br />
         <br />
         <Input id="mcode" value={modCode} onChange={this.handleCodeChange} placeholder="Module code" allowClear />

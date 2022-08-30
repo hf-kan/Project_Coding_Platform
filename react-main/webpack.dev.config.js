@@ -4,7 +4,7 @@ var webpack = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
-  entry: './src/index-ms.tsx',
+  entry: './src/index-dev.tsx',
   mode: 'development',
   devServer: {
     hot: true,
@@ -12,6 +12,14 @@ module.exports = {
 
   plugins: [
     new ReactRefreshWebpackPlugin(),
+    [
+      'prismjs', {
+      languages: ['javascript', 'css', 'markup', 'java'],
+      plugins: ['line-numbers'],
+      theme: 'twilight',
+      css: true
+      }
+    ]
   ],
 
   output: {

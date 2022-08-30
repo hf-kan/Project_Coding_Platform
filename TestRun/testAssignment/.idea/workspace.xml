@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="fe642bce-1de3-45a6-846b-549682f89d18" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/src/lib/fetchModel.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Server/src/models/assignmentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../Server/src/models/assignmentModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/.babelrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/.babelrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/LoadUserModules.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/ModuleLIst.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/PageLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/components/PageLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/SignInButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/components/SignInButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/SignOutButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/components/SignOutButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/StudentListModuleAssignment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/components/StudentListModuleAssignment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/StudentMain.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/components/StudentMain.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/components/connectServer.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/App/css/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/App/css/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/src/lib/services.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/src/lib/services.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../react-main/webpack.dev.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../react-main/webpack.dev.config.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="2DzKsF9iCm7UAHZZMwwWzRL9sSZ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../testRun_Idea" />
+    <property name="settings.editor.selected.configurable" value="preferences.updates" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fe642bce-1de3-45a6-846b-549682f89d18" name="Changes" comment="" />
+      <created>1661696681024</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1661696681024</updated>
+    </task>
+    <servers />
+  </component>
+</project>
