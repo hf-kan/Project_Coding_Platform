@@ -14,10 +14,10 @@ import { AxiosResponse } from 'axios';
 import { Link } from 'react-router-dom';
 
 import {
-  getAssignmentsById,
-  submitSubmission,
+  getAssignmentsByIdFiltered,
   getSubmissionById,
   getUserPersonalInfo,
+  runAutoMarker,
 } from '../../lib/services';
 
 interface Props {
@@ -32,6 +32,7 @@ class App extends Component
   code: string,
   submitAnimation: boolean,
   statusMessage: string,
+  runAutoMarkerResult: string;
 }> {
   submissionDocument: any;
 
@@ -46,6 +47,7 @@ class App extends Component
       code: '',
       submitAnimation: false,
       statusMessage: '',
+      runAutoMarkerResult: '',
     };
     this.submissionDocument = {};
     this.userInfo = {};
@@ -62,9 +64,9 @@ class App extends Component
       getSubmissionById((match.params.key), (submissionArray:any) => {
         [submission] = submissionArray;
         this.submissionDocument = submission;
-        getUserPersonalInfo((submission.username), (user:any) => {
+        getUserPersonalInfo((submission.userKey), (user:any) => {
           this.userInfo = user;
-          getAssignmentsById((submission.assignmentId), (assignmentArray:any) => {
+          getAssignmentsByIdFiltered((submission.assignmentId), (assignmentArray:any) => {
             [assignment] = assignmentArray;
             this.setState({
               assignmentName: assignment.title,
@@ -88,11 +90,13 @@ class App extends Component
       code,
       submitAnimation,
       statusMessage,
+      runAutoMarkerResult,
     } = this.state;
     const { TextArea } = Input;
     const { userId, username, name } = this.userInfo;
     const assignmentInstruction:string = assignmentDescr;
     const assignmentTitle: string = assignmentName;
+    console.log(this.submissionDocument);
     return (
       <div>
         <PageHeader
@@ -163,17 +167,18 @@ class App extends Component
                       loading={submitAnimation}
                       onClick={() => {
                         this.setState({ submitAnimation: true });
-                        submitSubmission(this.submissionDocument, (res:AxiosResponse) => {
+                        runAutoMarker(this.submissionDocument, (res:AxiosResponse) => {
                           if (res.status === 200) {
-                            this.submissionDocument = res.data;
                             this.setState({
                               submitAnimation: false,
-                              statusMessage: 'Submission successful! You may now leave this page',
+                              statusMessage: 'Auto marker run successfully',
+                              runAutoMarkerResult: res.data,
                             });
                           } else {
                             this.setState({
                               submitAnimation: false,
-                              statusMessage: `Submission Error: ${res.data}`,
+                              statusMessage: 'Auto marker run result in error',
+                              runAutoMarkerResult: res.data,
                             });
                           }
                         });
@@ -191,6 +196,17 @@ class App extends Component
                       <Link to={`/ViewStudentSubmissions/${assignmentId}`}>Go Back to Submission List</Link>
                     </Button>
                   </Space>
+                  <br />
+                  <br />
+                  Auto-marker run result:
+                  <br />
+                  <TextArea
+                    id="autoGraderResult"
+                    value={runAutoMarkerResult}
+                    readOnly
+                    rows={10}
+                    placeholder="After running auto-marker, console output is displayed here."
+                  />
                 </div>
               </div>
             </Content>

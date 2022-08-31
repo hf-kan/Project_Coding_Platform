@@ -5,7 +5,7 @@ import {
 
 import moment from 'moment';
 
-import { addNewModule, getAllModules, getAllTerm } from '../../lib/adminServices';
+import { addNewAssignment, getAllModules, getAllTerm } from '../../lib/adminServices';
 
 class App extends Component
 <{}, {
@@ -118,7 +118,7 @@ class App extends Component
       methodName,
       skeletonCode,
     }];
-    addNewModule(message);
+    addNewAssignment(message);
   };
 
   render() {
@@ -201,7 +201,7 @@ class App extends Component
         />
         <br />
         <br />
-        <Button disabled style={{ marginLeft: 20 }} type="primary" onClick={this.handleAssignmentSubmit}>Click to add test module</Button>
+        <Button style={{ marginLeft: 20 }} type="primary" onClick={this.handleAssignmentSubmit}>Click to add test module</Button>
       </div>
     );
   }

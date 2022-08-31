@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { getUserDisplayName } from '../../lib/services';
 
 function MyComponent(props:any) {
-  const { username } = props;
+  const { userKey } = props;
   const [welcomeMsg, setWelcomeMsg] = useState(String);
 
-  getUserDisplayName(username, (displayName:string) => {
+  getUserDisplayName(userKey, (displayName:string) => {
     setWelcomeMsg(`You are current signed in as: ${displayName}`);
   });
   return (
-    <h3 className="userName">
+    <h3 className="userKey">
       { welcomeMsg }
     </h3>
   );

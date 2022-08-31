@@ -5,7 +5,7 @@ import { Layout } from 'antd';
 import './css/App.css';
 import HeadPanel from './Header';
 import HomepageContent from './components/HomepageContent';
-import { getUserRole } from '../lib/services';
+import { getUserRole, getUserId } from '../lib/services';
 import Admin from './components/admin';
 import Student from './components/StudentMain';
 import Lecturer from './components/LecturerMain';
@@ -23,22 +23,24 @@ interface Props {
   graphData: any,
 }
 
-class App extends Component <Props, { role: string[], username: string }> {
+class App extends Component <Props, { role: string[], userKey: string }> {
   constructor(props:any) {
     super(props);
     this.state = {
       role: [],
-      username: '',
+      userKey: '',
     };
   }
 
   componentDidMount() {
     const getModuleData = async () => {
       const { graphData } = this.props;
-      getUserRole(graphData.userPrincipalName, (userRole: string[]) => {
-        this.setState({
-          role: userRole,
-          username: graphData.userPrincipalName,
+      getUserId(graphData.userPrincipalName, (id:string) => {
+        getUserRole(id, (userRole: string[]) => {
+          this.setState({
+            role: userRole,
+            userKey: id,
+          });
         });
       });
     };
@@ -46,8 +48,8 @@ class App extends Component <Props, { role: string[], username: string }> {
   }
 
   render() {
-    const { role, username } = this.state;
-    const userProps = { username };
+    const { role, userKey } = this.state;
+    const userProps = { userKey };
     return (
       <Router>
         <Layout className="layout">
@@ -57,7 +59,7 @@ class App extends Component <Props, { role: string[], username: string }> {
                 width: '100%',
               }}
             >
-              <HeadPanel role={role} username={username} />
+              <HeadPanel role={role} userKey={userKey} />
             </Header>
           </div>
           <Content
@@ -85,9 +87,9 @@ class App extends Component <Props, { role: string[], username: string }> {
                 <Route path="/lecturer">
                   <Lecturer {...userProps} />
                 </Route>
-                <Route path="/assignmentList/:username/:key" component={StudentListModuleAssignment} />
-                <Route path="/studentAssignment/:username/:key" component={StudentAssignment} />
-                <Route path="/lecturerAssignmentList/:username/:key" component={LecturerListModuleAssignment} />
+                <Route path="/assignmentList/:userKey/:key" component={StudentListModuleAssignment} />
+                <Route path="/studentAssignment/:userKey/:key" component={StudentAssignment} />
+                <Route path="/lecturerAssignmentList/:userKey/:key" component={LecturerListModuleAssignment} />
                 <Route path="/ViewStudentSubmissions/:key" component={LecturerListStudentsSubmissions} />
                 <Route path="/viewSubmission/:key" component={LecturerViewSubmission} />
               </Switch>

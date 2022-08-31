@@ -6,6 +6,7 @@ RecycleBin
 Server/dist
 Server/node_modules
 Server/.env
+JUnit
 # Gradle
 .gradle
 JUnit/JUnit_Autograder/build/

@@ -45,7 +45,7 @@ class App extends Component
             getStudentsByModule(assignment[0].module, (arrayOfStudents:any[]) => {
               arrayOfStudents.forEach((student) => {
                 submission = arrayOfSubmissions.find(
-                  (sub) => sub.username === student.username,
+                  (sub) => sub.userKey === student.id,
                 );
                 if (submission === undefined) {
                   output.push({

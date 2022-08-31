@@ -6,7 +6,7 @@ import DisplayUser from './components/DisplayUser';
 
 interface Props {
   role: string[],
-  username: string,
+  userKey: string,
 }
 
 function MyComponent(props: Props) {

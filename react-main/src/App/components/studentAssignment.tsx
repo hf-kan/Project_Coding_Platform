@@ -15,7 +15,7 @@ import {
 import { AxiosResponse } from 'axios';
 
 import {
-  getAssignmentsById,
+  getAssignmentsByIdFiltered,
   getSubmissionsByUserAssignment,
   addSubmission,
   updateSubmission,
@@ -44,8 +44,6 @@ class App extends Component
 }> {
   submissionDocument: any;
 
-  assignmentDocument: any;
-
   constructor(props:Props) {
     super(props);
     this.state = {
@@ -62,7 +60,6 @@ class App extends Component
       readOnly: false,
     };
     this.submissionDocument = {};
-    this.assignmentDocument = {};
   }
   // get the details of the current assignment
   // then check if first open (by checking if submission exist for current user and assignment)
@@ -73,13 +70,12 @@ class App extends Component
       const { match } = this.props;
       let assignment: any;
       let submissionFromDB: any[] = [];
-      getAssignmentsById((match.params.key), (assignmentArray:any) => {
+      getAssignmentsByIdFiltered((match.params.key), (assignmentArray:any) => {
         // load assignment details
         [assignment] = assignmentArray;
-        this.assignmentDocument = assignment;
         getSubmissionsByUserAssignment(
           // try to load students' submission
-          (match.params.username),
+          (match.params.userkey),
           (match.params.key),
           (arrayOfSubmissions:any[]) => {
             if (arrayOfSubmissions.length === 0) {
@@ -87,7 +83,7 @@ class App extends Component
               // and load skeleton code
               const message: any[] = [{
                 assignmentId: match.params.key,
-                username: match.params.username,
+                userkey: match.params.userkey,
                 programCode: assignment.skeletonCode,
               }];
               addSubmission(message, (res:AxiosResponse) => {
@@ -264,7 +260,6 @@ class App extends Component
                                 this.setState({ runResult: waitMsg });
                                 testRun(
                                   testCase,
-                                  this.assignmentDocument,
                                   this.submissionDocument,
                                   (output:string) => {
                                     this.setState({ runResult: output });

@@ -3,7 +3,7 @@ import qs from 'qs';
 
 function getUserId(username:string, callBack:Function) {
   let output:string;
-  axios.get(`http://localhost:8080/users/${username}`)
+  axios.get(`http://localhost:8080/getUsersFromName/${username}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -12,9 +12,9 @@ function getUserId(username:string, callBack:Function) {
     });
 }
 
-function getUserDisplayName(username:string, callBack:Function) {
+function getUserDisplayName(userKey:string, callBack:Function) {
   let output:string;
-  axios.get(`http://localhost:8080/users/${username}`)
+  axios.get(`http://localhost:8080/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -23,9 +23,9 @@ function getUserDisplayName(username:string, callBack:Function) {
     });
 }
 
-function getUserRole(username:string, callBack:Function) {
+function getUserRole(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${username}`)
+  axios.get(`http://localhost:8080/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -36,19 +36,24 @@ function getUserRole(username:string, callBack:Function) {
     });
 }
 
-function getUserPersonalInfo(username:string, callBack:Function) {
-  axios.get(`http://localhost:8080/users/${username}`)
+function getUserPersonalInfo(userKey:string, callBack:Function) {
+  axios.get(`http://localhost:8080/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
-      const output = { username: data[0].username, name: data[0].name, userId: data[0].userId };
+      const output = {
+        id: data[0]._id,
+        username: data[0].username,
+        name: data[0].name,
+        userId: data[0].userId,
+      };
       callBack(output);
     });
 }
 
-function getStudentModules(username:string, callBack:Function) {
+function getStudentModules(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${username}`)
+  axios.get(`http://localhost:8080/users/${userKey}`)
     .then((res) => {
       const rawData = res.data;
       const data = JSON.parse(JSON.stringify(rawData));
@@ -82,9 +87,9 @@ function getStudentsByModule(moduleId:string, callBack:Function) {
     });
 }
 
-function getLecturerModules(username:string, callBack:Function) {
+function getLecturerModules(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${username}`)
+  axios.get(`http://localhost:8080/users/${userKey}`)
     .then((res) => {
       const rawData = res.data;
       const data = JSON.parse(JSON.stringify(rawData));
@@ -146,10 +151,24 @@ function getAssignmentsById(Id: any[], callBack:Function) {
     });
 }
 
-function getSubmissionsByUserAssignment(username: any[], assignmentId: any[], callBack:Function) {
+function getAssignmentsByIdFiltered(Id: any[], callBack:Function) {
+  axios.get('http://localhost:8080/getAssignmentsBasic/query', {
+    params: {
+      ObjectId: Id,
+    },
+    paramsSerializer: (params) => qs.stringify(params),
+  })
+    .then((res) => {
+      const rawData = res.data;
+      const output = JSON.parse(JSON.stringify(rawData));
+      callBack(output);
+    });
+}
+
+function getSubmissionsByUserAssignment(userKey: any[], assignmentId: any[], callBack:Function) {
   axios.get('http://localhost:8080/submissions/queryByUserAssignment', {
     params: {
-      username,
+      userKey,
       assignmentId,
     },
     paramsSerializer: (params) => qs.stringify(params),
@@ -219,6 +238,14 @@ function userTestRun(testObject:any, callBack:Function) {
     });
 }
 
+function runAutoMarker(submission:any, callBack:Function) {
+  const submissionObject:any = { submission };
+  axios.post('http://localhost:8080/runAutoMarker', submissionObject)
+    .then((res) => {
+      callBack(res);
+    });
+}
+
 export {
   getUserId,
   getUserDisplayName,
@@ -231,6 +258,7 @@ export {
   getTermsById,
   getOneModuleAssignments,
   getAssignmentsById,
+  getAssignmentsByIdFiltered,
   getSubmissionsByUserAssignment,
   getSubmissionsByAssignment,
   getSubmissionById,
@@ -238,4 +266,5 @@ export {
   updateSubmission,
   submitSubmission,
   userTestRun,
+  runAutoMarker,
 };

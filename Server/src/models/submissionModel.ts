@@ -4,7 +4,7 @@ const submissionSchema = new mongoose.Schema({
   assignmentId: {
     type: String,
   },
-  username: {
+  userKey: {
     type: String,
   },
   status: {
