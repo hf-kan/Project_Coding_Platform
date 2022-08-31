@@ -95,7 +95,8 @@ class App extends Component
     const { TextArea } = Input;
     const { userId, username, name } = this.userInfo;
     const assignmentInstruction:string = assignmentDescr;
-    const assignmentTitle: string = assignmentName;
+    const assignmentTitle:string = assignmentName;
+    let consoleOutput:string = '';
     console.log(this.submissionDocument);
     return (
       <div>
@@ -169,16 +170,30 @@ class App extends Component
                         this.setState({ submitAnimation: true });
                         runAutoMarker(this.submissionDocument, (res:AxiosResponse) => {
                           if (res.status === 200) {
+                            const { stdout, stderr } = res.data;
+                            if (stderr.length === 0) {
+                              consoleOutput = stdout;
+                            } else {
+                              consoleOutput = stderr;
+                            }
                             this.setState({
                               submitAnimation: false,
                               statusMessage: 'Auto marker run successfully',
-                              runAutoMarkerResult: res.data,
+                              runAutoMarkerResult: consoleOutput,
                             });
                           } else {
+                            const { error, stderr, abnormalError } = res.data;
+                            if (stderr !== undefined) {
+                              consoleOutput = stderr;
+                            } else if (error !== undefined) {
+                              consoleOutput = error;
+                            } else if (abnormalError !== undefined) {
+                              consoleOutput = abnormalError;
+                            }
                             this.setState({
                               submitAnimation: false,
                               statusMessage: 'Auto marker run result in error',
-                              runAutoMarkerResult: res.data,
+                              runAutoMarkerResult: consoleOutput,
                             });
                           }
                         });

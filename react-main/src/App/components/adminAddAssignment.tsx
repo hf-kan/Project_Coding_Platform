@@ -140,7 +140,7 @@ class App extends Component
       <div>
         <PageHeader
           className="site-page-header"
-          title="Add new assignments"
+          title="Add a new assignment"
         />
         <Input id="title" value={title} onChange={this.handleChange} placeholder="Assignment Name" allowClear />
         <br />
@@ -201,7 +201,7 @@ class App extends Component
         />
         <br />
         <br />
-        <Button style={{ marginLeft: 20 }} type="primary" onClick={this.handleAssignmentSubmit}>Click to add test module</Button>
+        <Button style={{ marginLeft: 20 }} type="primary" onClick={this.handleAssignmentSubmit}>Add Assignment</Button>
       </div>
     );
   }

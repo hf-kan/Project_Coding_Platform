@@ -298,7 +298,7 @@ app.get('/submissions/queryByUserAssignment', async (request, response) => {
   try {
     SubmissionModel.find(
       {
-        userkey: request.query.userkey,
+        userKey: request.query.userKey,
         assignmentId: request.query.assignmentId,
       },
     ).sort({ lastUpdateDtm: -1 }).setOptions(
@@ -353,10 +353,10 @@ app.get('/submissions/getById', async (request, response) => {
 });
 
 app.post('/submissions/add', async (request, response) => {
-  const { assignmentId, userkey, programCode } = request.body[0];
+  const { assignmentId, userKey, programCode } = request.body[0];
   const newSubmission = new SubmissionModel({
     assignmentId,
-    userkey,
+    userKey,
     status: 'InProgress',
     score: 0,
     programCode,
@@ -375,7 +375,7 @@ app.patch('/submissions/update', async (request, response) => {
   const {
     _id,
     assignmentId,
-    userkey,
+    userKey,
     status,
     score,
     programCode,
@@ -384,7 +384,7 @@ app.patch('/submissions/update', async (request, response) => {
   } = request.body;
   const contentToBeUpdated: any = {
     assignmentId,
-    userkey,
+    userKey,
     status,
     score,
     programCode,

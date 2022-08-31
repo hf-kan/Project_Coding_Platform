@@ -81,7 +81,7 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/studentAssignment/${match.params.userkey}/${record.key}`;
+          const path = `/studentAssignment/${match.params.userKey}/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">

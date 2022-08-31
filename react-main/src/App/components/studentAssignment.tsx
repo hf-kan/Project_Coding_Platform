@@ -75,7 +75,7 @@ class App extends Component
         [assignment] = assignmentArray;
         getSubmissionsByUserAssignment(
           // try to load students' submission
-          (match.params.userkey),
+          (match.params.userKey),
           (match.params.key),
           (arrayOfSubmissions:any[]) => {
             if (arrayOfSubmissions.length === 0) {
@@ -83,7 +83,7 @@ class App extends Component
               // and load skeleton code
               const message: any[] = [{
                 assignmentId: match.params.key,
-                userkey: match.params.userkey,
+                userKey: match.params.userKey,
                 programCode: assignment.skeletonCode,
               }];
               addSubmission(message, (res:AxiosResponse) => {
