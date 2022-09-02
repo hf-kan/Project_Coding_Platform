@@ -19,9 +19,6 @@ const submissionSchema = new mongoose.Schema({
   graderXML: {
     type: Object,
   },
-  graderReport: {
-    type: Object,
-  },
   lastUpdateDtm: {
     type: Date,
   },

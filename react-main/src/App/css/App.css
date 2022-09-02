@@ -7,3 +7,10 @@
   padding: 12px;
   background: #fff;
 }
+.userName{
+  background: #fff;
+  padding-right: 32px;
+  padding-top: 10px;
+  text-align: right;
+  height: 40px;
+}

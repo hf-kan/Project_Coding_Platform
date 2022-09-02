@@ -97,7 +97,6 @@ class App extends Component
     const assignmentInstruction:string = assignmentDescr;
     const assignmentTitle:string = assignmentName;
     let consoleOutput:string = '';
-    console.log(this.submissionDocument);
     return (
       <div>
         <PageHeader
@@ -189,6 +188,8 @@ class App extends Component
                               consoleOutput = error;
                             } else if (abnormalError !== undefined) {
                               consoleOutput = abnormalError;
+                            } else {
+                              consoleOutput = res.data;
                             }
                             this.setState({
                               submitAnimation: false,
@@ -202,7 +203,7 @@ class App extends Component
                       Run Automarker
                     </Button>
                     <Button type="primary">
-                      View Test Report
+                      <Link to={`/ViewReport/lecturer/${this.submissionDocument._id}`}>View Test Report</Link>
                     </Button>
                     <Button type="primary">
                       View Raw Test Result
@@ -231,4 +232,5 @@ class App extends Component
     );
   }
 }
+
 export default App;

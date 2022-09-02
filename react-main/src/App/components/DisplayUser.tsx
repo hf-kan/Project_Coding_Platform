@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
+import { Typography } from 'antd';
 
 import { getUserDisplayName } from '../../lib/services';
 
-function MyComponent(props:any) {
+interface Props {
+  userKey: string,
+}
+
+function MyComponent(props:Props) {
   const { userKey } = props;
   const [welcomeMsg, setWelcomeMsg] = useState(String);
-
+  const { Title } = Typography;
   getUserDisplayName(userKey, (displayName:string) => {
-    setWelcomeMsg(`You are current signed in as: ${displayName}`);
+    setWelcomeMsg(`You are currently signed in as: ${displayName}`);
   });
   return (
-    <h3 className="userKey">
-      { welcomeMsg }
-    </h3>
+    <Title level={5}>{ welcomeMsg }</Title>
   );
 }
 

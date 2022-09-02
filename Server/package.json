@@ -26,7 +26,8 @@
     "http-errors": "^2.0.0",
     "mongodb": "^4.8.0",
     "mongoose": "^6.4.4",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
@@ -35,6 +36,7 @@
     "@types/http-errors": "^1.8.2",
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.0.4",
+    "@types/xml2js": "^0.4.11",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "eslint": "^8.19.0",

@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import {
-  PageHeader, Button, Input, Select, DatePicker,
+  PageHeader, Button, Input, Select, DatePicker, Space,
 } from 'antd';
+
+import { Link } from 'react-router-dom';
+
+import { AxiosResponse } from 'axios';
 
 import moment from 'moment';
 
@@ -19,6 +23,7 @@ class App extends Component
   testCase:string,
   methodName:string,
   skeletonCode:string,
+  statusMsg:string;
   }> {
   constructor(props:any) {
     super(props);
@@ -33,6 +38,7 @@ class App extends Component
       testCase: '',
       methodName: '',
       skeletonCode: '',
+      statusMsg: '',
     };
   }
 
@@ -118,7 +124,13 @@ class App extends Component
       methodName,
       skeletonCode,
     }];
-    addNewAssignment(message);
+    addNewAssignment(message, (res:AxiosResponse) => {
+      if (res.status === 200) {
+        this.setState({ statusMsg: 'Assignment added successfully' });
+      } else {
+        this.setState({ statusMsg: `Error while adding assignment: ${res.data}` });
+      }
+    });
   };
 
   render() {
@@ -133,6 +145,7 @@ class App extends Component
       testCase,
       methodName,
       skeletonCode,
+      statusMsg,
     } = this.state;
 
     const { TextArea } = Input;
@@ -146,8 +159,8 @@ class App extends Component
         <br />
         <br />
         Module:
-        <Input.Group compact>
-          <Select id="module" value={module} onChange={this.handleModuleChange} placeholder="Please select a module here...         ">
+        <Input.Group>
+          <Select id="module" style={{ minWidth: 500 }} value={module} onChange={this.handleModuleChange} placeholder="Select a module">
             {moduleItems}
           </Select>
         </Input.Group>
@@ -155,11 +168,13 @@ class App extends Component
         <TextArea id="descr" value={descr} onChange={this.handleChange} rows={5} placeholder="Enter assignment instruction here" />
         <br />
         <br />
-        { 'Start Datetime: ' }
-        <DatePicker allowClear={false} id="start" value={moment(start)} showTime minuteStep={5} secondStep={60} onChange={this.handleStartChange} />
-        <br />
-        { 'End Datetime: ' }
-        <DatePicker allowClear={false} id="end" value={moment(end)} showTime minuteStep={5} secondStep={60} onChange={this.handleEndChange} />
+        <Space>
+          { 'Start Datetime: ' }
+          <DatePicker allowClear={false} id="start" value={moment(start)} showTime minuteStep={5} secondStep={60} onChange={this.handleStartChange} />
+          <br />
+          { 'End Datetime: ' }
+          <DatePicker allowClear={false} id="end" value={moment(end)} showTime minuteStep={5} secondStep={60} onChange={this.handleEndChange} />
+        </Space>
         <br />
         <br />
         <TextArea
@@ -201,7 +216,13 @@ class App extends Component
         />
         <br />
         <br />
-        <Button style={{ marginLeft: 20 }} type="primary" onClick={this.handleAssignmentSubmit}>Add Assignment</Button>
+        <Space size="large">
+          <Button type="primary" onClick={this.handleAssignmentSubmit}>Add Assignment</Button>
+          <Button><Link to="/admin">Return to Administrator page</Link></Button>
+        </Space>
+        <br />
+        <br />
+        { statusMsg }
       </div>
     );
   }

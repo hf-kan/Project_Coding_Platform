@@ -15,6 +15,8 @@ import LecturerListModuleAssignment from './components/LecturerListModuleAssignm
 import LecturerListStudentsSubmissions from './components/LecturerListStudentsSubmissions';
 import LecturerViewSubmission from './components/LecturerViewSubmission';
 import AddAssignment from './components/adminAddAssignment';
+import DisplayUser from './components/DisplayUser';
+import TestReport from './components/testReport';
 
 const { Header, Content } = Layout;
 
@@ -59,42 +61,48 @@ class App extends Component <Props, { role: string[], userKey: string }> {
                 width: '100%',
               }}
             >
-              <HeadPanel role={role} userKey={userKey} />
+              <HeadPanel role={role} />
             </Header>
           </div>
-          <Content
-            className="site-layout"
-          >
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-              }}
+          <div>
+            <Content
+              className="site-layout"
             >
-              <Switch>
-                <Route exact path="/">
-                  <HomepageContent />
-                </Route>
-                <Route path="/admin">
-                  <Admin />
-                </Route>
-                <Route path="/addAssignment">
-                  <AddAssignment />
-                </Route>
-                <Route path="/student">
-                  <Student {...userProps} />
-                </Route>
-                <Route path="/lecturer">
-                  <Lecturer {...userProps} />
-                </Route>
-                <Route path="/assignmentList/:userKey/:key" component={StudentListModuleAssignment} />
-                <Route path="/studentAssignment/:userKey/:key" component={StudentAssignment} />
-                <Route path="/lecturerAssignmentList/:userKey/:key" component={LecturerListModuleAssignment} />
-                <Route path="/ViewStudentSubmissions/:key" component={LecturerListStudentsSubmissions} />
-                <Route path="/viewSubmission/:key" component={LecturerViewSubmission} />
-              </Switch>
-            </div>
-          </Content>
+              <div className="userName">
+                <DisplayUser userKey={userKey} />
+              </div>
+              <div
+                className="site-layout-background"
+                style={{
+                  padding: 24,
+                }}
+              >
+                <Switch>
+                  <Route exact path="/">
+                    <HomepageContent />
+                  </Route>
+                  <Route path="/admin">
+                    <Admin />
+                  </Route>
+                  <Route path="/addAssignment">
+                    <AddAssignment />
+                  </Route>
+                  <Route path="/student">
+                    <Student {...userProps} />
+                  </Route>
+                  <Route path="/lecturer">
+                    <Lecturer {...userProps} />
+                  </Route>
+                  <Route path="/assignmentList/:userKey/:key" component={StudentListModuleAssignment} />
+                  <Route path="/studentAssignment/:userKey/:key" component={StudentAssignment} />
+                  <Route path="/lecturerAssignmentList/:userKey/:key" component={LecturerListModuleAssignment} />
+                  <Route path="/ViewStudentSubmissions/:key" component={LecturerListStudentsSubmissions} />
+                  <Route path="/viewSubmission/:key" component={LecturerViewSubmission} />
+                  <Route path="/ViewReport/:mode/:key" component={TestReport} />
+                </Switch>
+              </div>
+            </Content>
+          </div>
         </Layout>
       </Router>
     );

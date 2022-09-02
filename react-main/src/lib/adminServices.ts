@@ -11,14 +11,10 @@ function addNewModule(module:object) {
     });
 }
 
-function addNewAssignment(assignment:object) {
+function addNewAssignment(assignment:object, callBack: Function) {
   axios.post('http://localhost:8080/assignments/add', assignment)
     .then((res) => {
-      if (res.status === 200) {
-        console.log(res.data);
-      } else {
-        console.log(`${res.status}: ${res.data}`);
-      }
+      callBack(res.data);
     });
 }
 

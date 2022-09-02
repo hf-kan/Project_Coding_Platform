@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import fs from 'fs';
+import xml2js from 'xml2js';
 
 import UserModel from './models/userModel';
 import termModel from './models/termModel';
@@ -16,6 +17,7 @@ import SubmissionModel from './models/submissionModel';
 // import msAuthApp from './app/msAuthApp';
 
 import { connectDB } from './lib/dbConnect';
+import { StringExpressionOperator } from 'mongoose';
 
 dotenv.config();
 
@@ -43,16 +45,7 @@ app.get(
   '/',
   async (req: Request, res: Response) => {
     // msAuthApp(req, res);
-    res.status(200).send(JSON.stringify('success'));
-  },
-);
-
-app.post(
-  '/login',
-  async (req: Request, res: Response) => {
-    const { user, password } = req.body;
-    const response = `User: ${user} Password: ${password}`;
-    res.status(200).send(JSON.stringify(response));
+    res.status(200).send(JSON.stringify('Express Router active'));
   },
 );
 
@@ -71,10 +64,8 @@ app.get('/assignment/module/:moduleKey', async (request, response) => {
       .select('title module descr start end skeletonCode')
       .exec().then((data) => {
         if (!data) {
-          response.status(404).send({
-            message: 'not found',
-          });
-        } else response.send(data);
+          response.status(200).send([]);
+        } else response.status(200).send(data);
       });
   } catch (error) {
     response.status(500).send(error);
@@ -89,10 +80,8 @@ app.get('/assignments/query', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -108,10 +97,8 @@ app.get('/getAssignmentsBasic/query', async (request, response) => {
     ).exec()
       .then((data) => {
         if (!data) {
-          response.status(404).send({
-            message: 'not found',
-          });
-        } else response.send(data);
+          response.status(200).send([]);
+        } else response.status(200).send(data);
       });
   } catch (error) {
     response.status(500).send(error);
@@ -166,10 +153,8 @@ app.get('/modules', async (request, response) => {
   try {
     UserModel.find().exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(404).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -184,10 +169,8 @@ app.get('/modules/query', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -202,10 +185,8 @@ app.get('/users/:id', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -220,10 +201,8 @@ app.get('/getUsersFromName/:username', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -238,10 +217,8 @@ app.get('/getModuleStudents', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -252,10 +229,8 @@ app.get('/terms', async (request, response) => {
   try {
     termModel.find({}).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -266,10 +241,8 @@ app.get('/getAllModules', async (request, response) => {
   try {
     ModuleModel.find({}).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -284,10 +257,8 @@ app.get('/terms/query', async (request, response) => {
       getOption,
     ).exec().then((data) => {
       if (!data) {
-        response.status(404).send({
-          message: 'not found',
-        });
-      } else response.send(data);
+        response.status(200).send([]);
+      } else response.status(200).send(data);
     });
   } catch (error) {
     response.status(500).send(error);
@@ -306,8 +277,8 @@ app.get('/submissions/queryByUserAssignment', async (request, response) => {
     ).exec()
       .then((data) => {
         if (!data) {
-          response.send([]);
-        } else response.send(data);
+          response.status(200).send([]);
+        } else response.status(200).send(data);
       });
   } catch (error) {
     response.status(500).send(error);
@@ -325,8 +296,8 @@ app.get('/submissions/queryByAssignment', async (request, response) => {
     ).exec()
       .then((data) => {
         if (!data) {
-          response.send([]);
-        } else response.send(data);
+          response.status(200).send([]);
+        } else response.status(200).send(data);
       });
   } catch (error) {
     response.status(500).send(error);
@@ -345,7 +316,7 @@ app.get('/submissions/getById', async (request, response) => {
       .then((data) => {
         if (!data) {
           response.send([]);
-        } else response.send(data);
+        } else response.status(200).send(data);
       });
   } catch (error) {
     response.status(500).send(error);
@@ -435,7 +406,7 @@ app.post('/testRun', async (request, response) => {
           fs.writeFileSync(`${process.env.TESTER_PATH}/${userPath}/${process.env.SUBMISSION_CLASS}.java`, programCode);
           fs.writeFileSync(`${process.env.TESTER_PATH}/${userPath}/${process.env.SOLUTION_CLASS}.java`, solution);
         } else {
-          response.send({ abnormalError });
+          response.status(500).send({ abnormalError });
         }
         // compile and run
         const { stdout, stderr } = await execPromise(`
@@ -444,9 +415,9 @@ app.post('/testRun', async (request, response) => {
           ${cmd7CompileSubmission}&&
           ${cmd8CompileCore}&&
           ${cmd9RunTest}`);
-        response.send({ stdout, stderr });
+        response.status(200).send({ stdout, stderr });
       } catch (error) {
-        response.send(error);
+        response.status(500).send(error);
       }
     });
 });
@@ -465,8 +436,6 @@ app.post('/runAutoMarker', async (request, response) => {
         assignmentId,
         userKey,
         programCode,
-        graderXML,
-        graderReport,
       } = submissionData[0];
       AssignmentModel.find(
         { _id: assignmentId },
@@ -506,9 +475,26 @@ app.post('/runAutoMarker', async (request, response) => {
             ${cmd9RunUnitTest}`);
             // read report xml
             const xmlReport = fs.readFileSync(`${process.env.AUTOMARKER_PATH}/${output}/${process.env.AUTOMARKER_REPORT_FOLDER}/${process.env.AUTOMARKER_REPORT}`, 'utf8');
+            const parser = new xml2js.Parser();
+            let status:string = '';
+            let score:String = '';
+            parser.parseString((xmlReport), (error, result) => {
+              if (error) {
+                status = 'ErrorInParsing';
+                score = '0';
+              }
+              const totalTest:any = result.testsuite.$.tests;
+              const skippedTest:any = result.testsuite.$.skipped;
+              const failedTest:any = result.testsuite.$.failures;
+              const errorTest:any = result.testsuite.$.errors;
+              const successTest:any = totalTest - skippedTest - failedTest - errorTest;
+              score = ((successTest / totalTest) * 100).toFixed(2);
+              status = 'Graded';
+            });
             const contentToBeUpdated: any = {
+              score,
               graderXML: xmlReport,
-              graderReport,
+              status,
               lastUpdateDtm: new Date(),
             };
             await SubmissionModel.findByIdAndUpdate(_id, contentToBeUpdated).then(
