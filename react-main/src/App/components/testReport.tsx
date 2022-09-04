@@ -26,24 +26,26 @@ class App extends Component
 <Props, {
   userName:string,
   userKey:string,
+  assignmentId:string,
   assignmentName:string,
   moduleName:string,
-  moduleId:string,
   asgnStatus:string,
   score:string,
   parsedReport:any,
+  compileError:string,
 }> {
   constructor(props:Props) {
     super(props);
     this.state = {
       userName: '',
       userKey: '',
+      assignmentId: '',
       assignmentName: '',
       moduleName: '',
-      moduleId: '',
       asgnStatus: '',
       score: '',
       parsedReport: {},
+      compileError: '',
     };
   }
 
@@ -58,13 +60,17 @@ class App extends Component
                 userName: user.username,
                 userKey: user.id,
                 moduleName: `${modules[0].moduleId} ${modules[0].name}`,
+                assignmentId: submission[0].assignmentId,
                 assignmentName: assignment[0].title,
                 score: submission[0].score,
                 asgnStatus: submission[0].status,
+                compileError: submission[0].compileError,
               });
               if (submission[0].graderXML !== undefined) {
                 const parsedReport = parseJUnitReportXML(submission[0].graderXML);
                 this.setState({ parsedReport });
+              } else {
+                this.setState({});
               }
             });
           });
@@ -83,12 +89,13 @@ class App extends Component
     const {
       userName,
       userKey,
+      assignmentId,
       assignmentName,
       moduleName,
-      moduleId,
       asgnStatus,
       score,
       parsedReport,
+      compileError,
     } = this.state;
 
     const {
@@ -103,14 +110,21 @@ class App extends Component
     if (mode === 'lecturer') {
       returnPath = `/viewSubmission/${key}`;
     } else {
-      returnPath = `/assignmentList/${userKey}/${moduleId}`;
+      returnPath = `/studentAssignment/${userKey}/${assignmentId}`;
+    }
+
+    let compileErrMsg:string;
+    if (compileError === undefined) {
+      compileErrMsg = '';
+    } else {
+      compileErrMsg = compileError;
     }
 
     const columns = [
       {
         title: 'Test No.',
-        dataIndex: 'i',
-        key: 'i',
+        dataIndex: 'key',
+        key: 'key',
       },
       {
         title: 'Test Name',
@@ -133,7 +147,7 @@ class App extends Component
         key: 'executionTime',
       },
     ];
-    if (parsedReport === undefined) {
+    if (parsedReport === undefined || parsedReport === {}) {
       return (
         <div>
           <PageHeader
@@ -174,6 +188,9 @@ class App extends Component
         <br />
         <b>{ 'Score: '}</b>
         { score }
+        <br />
+        <b>{ 'Compile Error: '}</b>
+        { compileErrMsg }
         <br />
         <br />
         <Title level={5}>Test Results Details:</Title>

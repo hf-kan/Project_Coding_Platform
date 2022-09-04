@@ -32,7 +32,9 @@ class App extends Component
   code: string,
   submitAnimation: boolean,
   statusMessage: string,
-  runAutoMarkerResult: string;
+  runAutoMarkerResult: string,
+  submissionStatus: string,
+  score: string,
 }> {
   submissionDocument: any;
 
@@ -48,6 +50,8 @@ class App extends Component
       submitAnimation: false,
       statusMessage: '',
       runAutoMarkerResult: '',
+      submissionStatus: '',
+      score: '',
     };
     this.submissionDocument = {};
     this.userInfo = {};
@@ -73,6 +77,8 @@ class App extends Component
               assignmentDescr: assignment.descr,
               assignmentId: assignment._id,
               code: this.submissionDocument.programCode,
+              submissionStatus: this.submissionDocument.status,
+              score: this.submissionDocument.score,
             });
           });
         });
@@ -91,6 +97,8 @@ class App extends Component
       submitAnimation,
       statusMessage,
       runAutoMarkerResult,
+      submissionStatus,
+      score,
     } = this.state;
     const { TextArea } = Input;
     const { userId, username, name } = this.userInfo;
@@ -112,15 +120,13 @@ class App extends Component
                 display: 'flex',
               }}
             >
-              <h5>
+              <Space direction="vertical">
                 {`Student ID: ${userId}`}
-              </h5>
-              <h5>
                 {`Student Name: ${name}`}
-              </h5>
-              <h5>
                 {`Username: ${username}`}
-              </h5>
+                {`Assignment Status: ${submissionStatus}`}
+                {`Score: ${score}`}
+              </Space>
               <h3>
                 {assignmentTitle}
               </h3>
@@ -170,26 +176,41 @@ class App extends Component
                         runAutoMarker(this.submissionDocument, (res:AxiosResponse) => {
                           if (res.status === 200) {
                             const { stdout, stderr } = res.data;
-                            if (stderr.length === 0) {
+                            if (stderr === undefined || stderr === '') {
                               consoleOutput = stdout;
                             } else {
                               consoleOutput = stderr;
                             }
-                            this.setState({
-                              submitAnimation: false,
-                              statusMessage: 'Auto marker run successfully',
-                              runAutoMarkerResult: consoleOutput,
+                            let submission:any;
+                            getSubmissionById((this.submissionDocument._id), (subArray:any) => {
+                              [submission] = subArray;
+                              this.submissionDocument = submission;
+                              this.setState({
+                                submitAnimation: false,
+                                statusMessage: 'Auto marker run completed',
+                                runAutoMarkerResult: consoleOutput,
+                                submissionStatus: submission.status,
+                                score: submission.score,
+                              });
                             });
                           } else {
-                            const { error, stderr, abnormalError } = res.data;
+                            const {
+                              error,
+                              stderr,
+                              abnormalError,
+                              compileError,
+                              stdout,
+                            } = res.data;
                             if (stderr !== undefined) {
                               consoleOutput = stderr;
                             } else if (error !== undefined) {
                               consoleOutput = error;
                             } else if (abnormalError !== undefined) {
                               consoleOutput = abnormalError;
+                            } else if (compileError !== undefined) {
+                              consoleOutput = compileError;
                             } else {
-                              consoleOutput = res.data;
+                              consoleOutput = stdout;
                             }
                             this.setState({
                               submitAnimation: false,

@@ -1,0 +1,6 @@
+@import '~antd/dist/antd.css';
+.timer{
+  padding-right: 32px;
+  text-align: right;
+  font-size: large;
+}

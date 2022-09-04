@@ -4,7 +4,7 @@ import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { promisify } from 'util';
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import fs from 'fs';
 import xml2js from 'xml2js';
 
@@ -17,7 +17,6 @@ import SubmissionModel from './models/submissionModel';
 // import msAuthApp from './app/msAuthApp';
 
 import { connectDB } from './lib/dbConnect';
-import { StringExpressionOperator } from 'mongoose';
 
 dotenv.config();
 
@@ -352,6 +351,7 @@ app.patch('/submissions/update', async (request, response) => {
     programCode,
     graderXML,
     graderReport,
+    compileError,
   } = request.body;
   const contentToBeUpdated: any = {
     assignmentId,
@@ -361,6 +361,7 @@ app.patch('/submissions/update', async (request, response) => {
     programCode,
     graderXML,
     graderReport,
+    compileError,
     lastUpdateDtm: new Date(),
   };
   await SubmissionModel.findByIdAndUpdate(_id, contentToBeUpdated).then(
@@ -416,8 +417,9 @@ app.post('/testRun', async (request, response) => {
           ${cmd8CompileCore}&&
           ${cmd9RunTest}`);
         response.status(200).send({ stdout, stderr });
-      } catch (error) {
-        response.status(500).send(error);
+      } catch (error:any) {
+        const { stdout, stderr } = error;
+        response.status(200).send({ stdout, stderr });
       }
     });
 });
@@ -456,57 +458,113 @@ app.post('/runAutoMarker', async (request, response) => {
           const cmd8CompileUnitTest = `javac -d ${output} -cp ${output}:${process.env.AUTOMARKER_LIBRARY_PATH}/${process.env.AUTOMARKER_LIBRARY} ${userPath}/${process.env.TESTER_CLASS}.java`;
           const cmd9RunUnitTest = `java -jar ${process.env.AUTOMARKER_LIBRARY_PATH}/${process.env.AUTOMARKER_LIBRARY} --class-path ${output} ${runTestArgs} ${runReport}`;
           const execPromise = promisify(exec);
+          let stdout:any;
+          let stderr:any;
+          let continueTesting:boolean = true;
           try {
             // create assignment user folder
-            const { stderr: abnormalError } = await execPromise(`${cmd1ChangeDir}&&${cmd2CreateFolder}`);
-            if (abnormalError.length === 0) {
-              fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.SUBMISSION_CLASS}.java`, programCode);
-              fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.SOLUTION_CLASS}.java`, solution);
-              fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.TESTER_CLASS}.java`, testCase);
-            } else {
-              response.status(500).send({ abnormalError });
-            }
-            // compile and run
-            const { stdout, stderr } = await execPromise(`
+            await execPromise(`${cmd1ChangeDir}&&${cmd2CreateFolder}`);
+            fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.SUBMISSION_CLASS}.java`, programCode);
+            fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.SOLUTION_CLASS}.java`, solution);
+            fs.writeFileSync(`${process.env.AUTOMARKER_PATH}/${userPath}/${process.env.TESTER_CLASS}.java`, testCase);
+            // compile Solution java
+            await execPromise(`
             ${cmd1ChangeDir}&&
-            ${cmd6CompileSolution}&&
-            ${cmd7CompileSubmission}&&
-            ${cmd8CompileUnitTest}&&
-            ${cmd9RunUnitTest}`);
-            // read report xml
-            const xmlReport = fs.readFileSync(`${process.env.AUTOMARKER_PATH}/${output}/${process.env.AUTOMARKER_REPORT_FOLDER}/${process.env.AUTOMARKER_REPORT}`, 'utf8');
-            const parser = new xml2js.Parser();
-            let status:string = '';
-            let score:String = '';
-            parser.parseString((xmlReport), (error, result) => {
-              if (error) {
-                status = 'ErrorInParsing';
-                score = '0';
-              }
-              const totalTest:any = result.testsuite.$.tests;
-              const skippedTest:any = result.testsuite.$.skipped;
-              const failedTest:any = result.testsuite.$.failures;
-              const errorTest:any = result.testsuite.$.errors;
-              const successTest:any = totalTest - skippedTest - failedTest - errorTest;
-              score = ((successTest / totalTest) * 100).toFixed(2);
-              status = 'Graded';
-            });
-            const contentToBeUpdated: any = {
-              score,
-              graderXML: xmlReport,
-              status,
-              lastUpdateDtm: new Date(),
-            };
-            await SubmissionModel.findByIdAndUpdate(_id, contentToBeUpdated).then(
-              () => { response.status(200).send({ stdout, stderr }); },
-            ).catch(
-              (error:any) => { response.status(500).send(error); },
-            );
+            ${cmd6CompileSolution}`);
           } catch (error) {
             response.status(500).send(error);
           }
+
+          try {
+            // try compile submission, cannot compile is considered a fail with 0 marks
+            await execPromise(`
+            ${cmd1ChangeDir}&&
+            ${cmd7CompileSubmission}`);
+          } catch (error:any) {
+            stdout = error.stdout;
+            stderr = error.stderr;
+            const contentToBeUpdated: any = {
+              score: '0',
+              graderXML: {},
+              status: 'Graded',
+              lastUpdateDtm: new Date(),
+              compileError: error.stderr,
+            };
+            await SubmissionModel.findByIdAndUpdate(_id, contentToBeUpdated).then(
+              () => {
+                response.status(200).send({ stdout, stderr });
+                continueTesting = false;
+              },
+            ).catch(
+              (updateError:any) => { response.status(500).send(updateError); },
+            );
+          }
+
+          if (continueTesting) {
+            try {
+              // compile JUnit Unit test java
+              await execPromise(`
+              ${cmd1ChangeDir}&&
+              ${cmd8CompileUnitTest}`);
+            } catch (error:any) {
+              response.status(500).send(error);
+            }
+
+            try {
+              // Run Unit Test
+              const { stdout: runOut, stderr: runErr } = await execPromise(`
+              ${cmd1ChangeDir}&&
+              ${cmd9RunUnitTest}`);
+              stdout = runOut;
+              stderr = runErr;
+            } catch (error:any) {
+              // Failing any test cases result in Status Code 1, thus is caught by the catch block
+              stdout = error.stdout;
+              stderr = error.stderr;
+            } finally {
+            // read report xml
+              const xmlReport = fs.readFileSync(`${process.env.AUTOMARKER_PATH}/${output}/${process.env.AUTOMARKER_REPORT_FOLDER}/${process.env.AUTOMARKER_REPORT}`, 'utf8');
+              const parser = new xml2js.Parser();
+              let status:string = '';
+              let score:String = '';
+              parser.parseString((xmlReport), (error, result) => {
+                if (error) {
+                  status = 'ErrorInParsing';
+                  score = '0';
+                }
+                const totalTest:any = result.testsuite.$.tests;
+                const skippedTest:any = result.testsuite.$.skipped;
+                const failedTest:any = result.testsuite.$.failures;
+                const errorTest:any = result.testsuite.$.errors;
+                const successTest:any = totalTest - skippedTest - failedTest - errorTest;
+                score = ((successTest / totalTest) * 100).toFixed(2);
+                status = 'Graded';
+              });
+              const contentToBeUpdated: any = {
+                score,
+                graderXML: xmlReport,
+                status,
+                lastUpdateDtm: new Date(),
+                compileError: '',
+              };
+              await SubmissionModel.findByIdAndUpdate(_id, contentToBeUpdated).then(
+                () => { response.status(200).send({ stdout, stderr }); },
+              ).catch(
+                (error:any) => { response.status(500).send(error); },
+              );
+            }
+          }
         });
     });
+});
+
+app.get('/getCurrentTime', async (request, response) => {
+  try {
+    const currDate:Date = new Date();
+    response.status(200).send(currDate);
+  } catch (error) {
+    response.status(500).send(error);
+  }
 });
 
 try {

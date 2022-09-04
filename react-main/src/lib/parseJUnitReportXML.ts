@@ -20,7 +20,6 @@ function parseJUnitReportXML(rawReport:string) {
     let testCaseName;
     let executionTime;
     const firstNodeName = immediateChild.nodeName;
-    console.log(immediateChild);
     switch (firstNodeName) {
       case 'failure': {
         status = 'failed';
@@ -52,7 +51,7 @@ function parseJUnitReportXML(rawReport:string) {
       }
     }
     const testCase = {
-      i,
+      key: i,
       testCaseName,
       status,
       message,

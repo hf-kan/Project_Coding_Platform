@@ -22,6 +22,9 @@ const submissionSchema = new mongoose.Schema({
   lastUpdateDtm: {
     type: Date,
   },
+  compileError: {
+    type: String,
+  },
 });
 
 const submissionModel = mongoose.model('submissions', submissionSchema, 'submissions');

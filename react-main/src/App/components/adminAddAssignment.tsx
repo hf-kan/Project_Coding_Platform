@@ -155,6 +155,7 @@ class App extends Component
           className="site-page-header"
           title="Add a new assignment"
         />
+        Assignment Name:
         <Input id="title" value={title} onChange={this.handleChange} placeholder="Assignment Name" allowClear />
         <br />
         <br />
@@ -165,6 +166,7 @@ class App extends Component
           </Select>
         </Input.Group>
         <br />
+        Assignment Instruction:
         <TextArea id="descr" value={descr} onChange={this.handleChange} rows={5} placeholder="Enter assignment instruction here" />
         <br />
         <br />
@@ -177,6 +179,7 @@ class App extends Component
         </Space>
         <br />
         <br />
+        Solution code:
         <TextArea
           id="solution"
           value={solution}
@@ -186,6 +189,7 @@ class App extends Component
         />
         <br />
         <br />
+        Unit Test Code:
         <TextArea
           id="testCase"
           value={testCase}
@@ -195,6 +199,7 @@ class App extends Component
         />
         <br />
         <br />
+        Entry method name:
         <Input
           id="methodName"
           value={methodName}
@@ -204,6 +209,7 @@ class App extends Component
         />
         <br />
         <br />
+        Skeleton Code for students:
         <TextArea
           id="skeletonCode"
           value={skeletonCode}

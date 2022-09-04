@@ -14,7 +14,7 @@ function addNewModule(module:object) {
 function addNewAssignment(assignment:object, callBack: Function) {
   axios.post('http://localhost:8080/assignments/add', assignment)
     .then((res) => {
-      callBack(res.data);
+      callBack(res);
     });
 }
 
@@ -36,4 +36,9 @@ function getAllModules(callback: Function) {
     });
 }
 
-export { addNewModule, getAllTerm, getAllModules, addNewAssignment };
+export {
+  addNewModule,
+  getAllTerm,
+  getAllModules,
+  addNewAssignment,
+};

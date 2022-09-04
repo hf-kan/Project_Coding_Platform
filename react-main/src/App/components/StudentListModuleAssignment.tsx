@@ -85,7 +85,7 @@ class App extends Component
           return (
             <Space size="middle">
               <Button type="primary">
-                <Link to={path}>Start Assignment</Link>
+                <Link to={path}>Start / View Assignment</Link>
               </Button>
             </Space>
           );

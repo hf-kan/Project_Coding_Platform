@@ -52,6 +52,7 @@ class App extends Component <Props, { role: string[], userKey: string }> {
   render() {
     const { role, userKey } = this.state;
     const userProps = { userKey };
+
     return (
       <Router>
         <Layout className="layout">

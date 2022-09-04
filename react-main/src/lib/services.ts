@@ -225,6 +225,7 @@ function updateSubmission(submission:any, callBack:Function) {
 function submitSubmission(submission:any, callBack:Function) {
   const toBeSubmitted = submission;
   toBeSubmitted.status = 'Submitted';
+  toBeSubmitted.compileError = '';
   axios.patch('http://localhost:8080/submissions/update', toBeSubmitted)
     .then((res) => {
       callBack(res);
@@ -243,6 +244,14 @@ function runAutoMarker(submission:any, callBack:Function) {
   axios.post('http://localhost:8080/runAutoMarker', submissionObject)
     .then((res) => {
       callBack(res);
+    });
+}
+
+function getCurrentDateTime(callBack:Function) {
+  axios.get('http://localhost:8080/getCurrentTime')
+    .then((res) => {
+      const curDate:Date = res.data;
+      callBack(curDate);
     });
 }
 
@@ -267,4 +276,5 @@ export {
   submitSubmission,
   userTestRun,
   runAutoMarker,
+  getCurrentDateTime,
 };
