@@ -101,6 +101,7 @@ class App extends Component
       score,
     } = this.state;
     const { TextArea } = Input;
+    const { match } = this.props;
     const { userId, username, name } = this.userInfo;
     const assignmentInstruction:string = assignmentDescr;
     const assignmentTitle:string = assignmentName;
@@ -162,6 +163,7 @@ class App extends Component
                     }}
                   />
                 </div>
+                <br />
                 <div className="submit-panel">
                   <Space>
                     <Button
@@ -220,13 +222,13 @@ class App extends Component
                       Run Automarker
                     </Button>
                     <Button type="primary">
-                      <Link to={`/ViewReport/lecturer/${this.submissionDocument._id}`}>View Test Report</Link>
+                      <Link to={`/ViewReport/lecturer/${match.params.userKey}/${this.submissionDocument._id}`}>View Test Report</Link>
                     </Button>
                     <Button type="primary">
-                      <Link to={`/ViewReportRaw/lecturer/${this.submissionDocument._id}`}>View Raw Test Report</Link>
+                      <Link to={`/ViewReportRaw/lecturer/${match.params.userKey}/${this.submissionDocument._id}`}>View Raw Test Report</Link>
                     </Button>
                     <Button>
-                      <Link to={`/ViewStudentSubmissions/${assignmentId}`}>Go Back to Submission List</Link>
+                      <Link to={`/lecturerListStudentSubmissions/${match.params.userKey}/${assignmentId}`}>Go Back to Submission List</Link>
                     </Button>
                   </Space>
                   <br />

@@ -97,9 +97,9 @@ class App extends Component
     let returnPath:string;
 
     if (mode === 'lecturer') {
-      returnPath = `/viewSubmission/${key}`;
+      returnPath = `/viewSubmission/${match.params.userKey}/${key}`;
     } else {
-      returnPath = `/ViewStudentSubmissions/${assignmentId}`;
+      returnPath = `/lecturerListStudentSubmissions/${match.params.userKey}/${assignmentId}`;
     }
 
     let compileErrMsg:string;
@@ -123,7 +123,7 @@ class App extends Component
       );
     }
 
-    if (rawReport === undefined || rawReport === '') {
+    if ((rawReport === undefined || rawReport === '') && (compileErrMsg === '')) {
       return (
         <div>
           <PageHeader

@@ -55,7 +55,6 @@ class App extends Component <Props, { role: string[], userKey: string }> {
 
   render() {
     const { role, userKey } = this.state;
-    const userProps = { userKey };
 
     return (
       <Router>
@@ -101,17 +100,15 @@ class App extends Component <Props, { role: string[], userKey: string }> {
                   <Route path="/addUser">
                     <AddUser />
                   </Route>
-                  <Route path="/lecturer">
-                    <Lecturer {...userProps} />
-                  </Route>
                   <Route path="/student/:userKey" component={Student} />
+                  <Route path="/lecturer/:userKey" component={Lecturer} />
                   <Route path="/assignmentList/:userKey/:key" component={StudentListModuleAssignment} />
                   <Route path="/studentAssignment/:userKey/:key" component={StudentAssignment} />
-                  <Route path="/lecturerAssignmentList/:key" component={LecturerListModuleAssignment} />
-                  <Route path="/ViewStudentSubmissions/:key" component={LecturerListStudentsSubmissions} />
-                  <Route path="/viewSubmission/:key" component={LecturerViewSubmission} />
-                  <Route path="/ViewReport/:mode/:key" component={TestReport} />
-                  <Route path="/ViewReportRaw/:mode/:key" component={TestReportRaw} />
+                  <Route path="/lecturerListModuleAssignmnts/:userKey/:key" component={LecturerListModuleAssignment} />
+                  <Route path="/lecturerListStudentSubmissions/:userKey/:key" component={LecturerListStudentsSubmissions} />
+                  <Route path="/viewSubmission/:userKey/:key" component={LecturerViewSubmission} />
+                  <Route path="/ViewReport/:mode/:userKey/:key" component={TestReport} />
+                  <Route path="/ViewReportRaw/:mode/:userKey/:key" component={TestReportRaw} />
                 </Switch>
               </div>
             </Content>

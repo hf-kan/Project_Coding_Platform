@@ -7,7 +7,9 @@ function getUserId(username:string, callBack:Function) {
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
-      output = data[0]._id;
+      if (data[0] !== undefined) {
+        output = data[0]._id;
+      }
       callBack(output);
     });
 }
@@ -18,7 +20,9 @@ function getUserDisplayName(userKey:string, callBack:Function) {
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
-      output = data[0].name;
+      if (data[0] !== undefined) {
+        output = data[0].name;
+      }
       callBack(output);
     });
 }

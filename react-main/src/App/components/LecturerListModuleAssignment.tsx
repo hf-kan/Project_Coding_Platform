@@ -4,6 +4,7 @@ import {
   Space,
   Table,
   Button,
+  Typography,
 } from 'antd';
 
 import { Link } from 'react-router-dom';
@@ -55,6 +56,9 @@ class App extends Component
 
   render() {
     const { assignmentData, moduleName } = this.state;
+    const { match } = this.props;
+    const { Title } = Typography;
+    const returnPath:string = `/lecturer/${match.params.userKey}`;
     const columns = [
       {
         title: 'Assignment',
@@ -80,7 +84,7 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/ViewStudentSubmissions/${record.key}`;
+          const path = `/lecturerListStudentSubmissions/${match.params.userKey}/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">
@@ -98,8 +102,13 @@ class App extends Component
           title="Assignments (Lecturer)"
           subTitle={`${moduleName}`}
         />
-        <br />
-        <br />
+        <Space direction="vertical">
+          <Button size="large">
+            <Link to={returnPath}>Return to Lecturer Homepage</Link>
+          </Button>
+          <br />
+        </Space>
+        <Title level={5}>Select an assignment from the table below</Title>
         <Table
           columns={columns}
           dataSource={assignmentData}

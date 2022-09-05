@@ -38,7 +38,7 @@ function MyComponent(props: Props) {
     } else if (role[i] === 'lecturer') {
       menuItems.push(
         <Menu.Item key="3">
-          <Link to="/lecturer" />
+          <Link to={`/lecturer/${userKey}`} />
           Lecturer
         </Menu.Item>,
       );

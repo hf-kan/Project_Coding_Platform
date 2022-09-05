@@ -4,6 +4,7 @@ import {
   Space,
   Table,
   Button,
+  Typography,
 } from 'antd';
 
 import {
@@ -23,6 +24,8 @@ interface Props {
 
 class App extends Component
 <Props, { submissionData: any[], moduleName: string, assignmentName: string }> {
+  moduleKey:string;
+
   constructor(props:Props) {
     super(props);
     this.state = {
@@ -30,6 +33,8 @@ class App extends Component
       moduleName: '',
       assignmentName: '',
     };
+
+    this.moduleKey = '';
   }
 
   componentDidMount() {
@@ -40,6 +45,7 @@ class App extends Component
       getAssignmentsById((match.params.key), (assignment:any) => {
         this.setState({ assignmentName: assignment[0].title });
         getModulesById(assignment[0].module, (module:any) => {
+          this.moduleKey = module[0]._id;
           this.setState({ moduleName: `(${module[0].moduleId}) ${module[0].name}` });
           getSubmissionsByAssignment(match.params.key, (arrayOfSubmissions:any[]) => {
             getStudentsByModule(assignment[0].module, (arrayOfStudents:any[]) => {
@@ -80,6 +86,9 @@ class App extends Component
 
   render() {
     const { submissionData, moduleName, assignmentName } = this.state;
+    const { match } = this.props;
+    const { Title } = Typography;
+    const returnPath:string = `/lecturerListModuleAssignmnts/${match.params.userKey}/${this.moduleKey}`;
     const columns = [
       {
         title: 'Student ID',
@@ -111,9 +120,9 @@ class App extends Component
         key: 'action',
         render: (_:any, record:any) => {
           if (record.status !== 'DidNotAttempt') {
-            const viewPath = `/viewSubmission/${record.submissionId}`;
-            const testReportPath = `/ViewReport/fromList/${record.submissionId}`;
-            const rawReportPath = `/ViewReportRaw/fromList/${record.submissionId}`;
+            const viewPath = `/viewSubmission/${match.params.userKey}/${record.submissionId}`;
+            const testReportPath = `/ViewReport/fromList/${match.params.userKey}/${record.submissionId}`;
+            const rawReportPath = `/ViewReportRaw/fromList/${match.params.userKey}/${record.submissionId}`;
             return (
               <Space size="small">
                 <Button type="link">
@@ -143,8 +152,13 @@ class App extends Component
           title={`Students enrolled in ${moduleName}`}
           subTitle={`Assignment: ${assignmentName}`}
         />
-        <br />
-        <br />
+        <Space direction="vertical">
+          <Button size="large">
+            <Link to={returnPath}>Return to assignments list</Link>
+          </Button>
+          <br />
+        </Space>
+        <Title level={5}>Select an action of an assignment from the table below</Title>
         <Table
           columns={columns}
           dataSource={submissionData}

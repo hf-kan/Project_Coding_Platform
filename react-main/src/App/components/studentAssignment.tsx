@@ -413,7 +413,7 @@ class App extends Component
                 {statusMessage}
               </h4>
               <Button type="primary" hidden={hideReportButton}>
-                <Link to={`/ViewReport/student/${this.submissionDocument._id}`}>View Test Report</Link>
+                <Link to={`/ViewReport/student/${match.params.userKey}/${this.submissionDocument._id}`}>View Test Report</Link>
               </Button>
               <TextArea readOnly value={assignmentInstruction} autoSize wrap="soft" />
             </Space>

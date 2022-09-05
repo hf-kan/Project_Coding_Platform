@@ -9,14 +9,19 @@ import {
 
 import { Link } from 'react-router-dom';
 
-import { getOneModuleAssignments, getModulesById } from '../../lib/services';
+import {
+  getOneModuleAssignments,
+  getModulesById,
+  getSubmissionsByUser,
+  getCurrentDateTime,
+} from '../../lib/services';
 
 interface Props {
   match: any,
 }
 
 class App extends Component
-<Props, { assignmentData: any[], moduleName: string }> {
+<Props, { assignmentData: any[], moduleName: string, }> {
   constructor(props:Props) {
     super(props);
     this.state = {
@@ -29,24 +34,55 @@ class App extends Component
     const getAssignmentData = async () => {
       const { match } = this.props;
       const output: any = [];
+      let status: string;
       let moduleTitle:string = '';
       getModulesById((match.params.key), (module:any) => {
         moduleTitle = `${module[0].moduleId} ${module[0].name}`;
         getOneModuleAssignments((match.params.key), (arrayOfAssignments:any[]) => {
-          arrayOfAssignments.forEach((item) => {
-            const startDate:Date = new Date(item.start);
-            const endDate:Date = new Date(item.end);
-            output.push({
-              key: item._id,
-              title: item.title,
-              start: startDate.toLocaleString(),
-              end: endDate.toLocaleString(),
-              duration: Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
+          getSubmissionsByUser((match.params.userKey), (arrayOfSubmissions:any[]) => {
+            getCurrentDateTime((curDate:Date) => {
+              arrayOfAssignments.forEach((item) => {
+                const startDate:Date = new Date(item.start);
+                const endDate:Date = new Date(item.end);
+                const assignmentId:string = item._id;
+                const submission:any = arrayOfSubmissions.find(
+                  (sub:any) => sub.assignmentId === assignmentId,
+                );
+                if (submission === undefined) {
+                  if (item.start > curDate) {
+                    status = 'NotAvailable';
+                  } else if (item.end < curDate) {
+                    status = 'DidNotAttempt';
+                  } else {
+                    status = 'Available';
+                  }
+                  output.push({
+                    key: item._id,
+                    title: item.title,
+                    start: startDate.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    duration: Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
+                    status,
+                  });
+                } else {
+                  const formatDate:string = new Date(submission.lastUpdateDtm).toLocaleString();
+                  output.push({
+                    key: item._id,
+                    title: item.title,
+                    start: startDate.toLocaleString(),
+                    end: endDate.toLocaleString(),
+                    duration: Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
+                    status: submission.status,
+                    score: submission.score,
+                    lastUpdateDtm: formatDate,
+                  });
+                }
+              });
+              this.setState({
+                assignmentData: output,
+                moduleName: moduleTitle,
+              });
             });
-          });
-          this.setState({
-            assignmentData: output,
-            moduleName: moduleTitle,
           });
         });
       });
@@ -88,6 +124,11 @@ class App extends Component
         title: 'Score',
         dataIndex: 'score',
         key: 'score',
+      },
+      {
+        title: 'Last Update',
+        dataIndex: 'lastUpdateDtm',
+        key: 'lastUpdateDtm',
       },
       {
         title: 'Action',

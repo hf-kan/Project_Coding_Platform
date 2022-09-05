@@ -4,6 +4,7 @@ import {
   Space,
   Table,
   Button,
+  Typography,
 } from 'antd';
 
 import {
@@ -13,7 +14,7 @@ import {
 import { getStudentModules, getModulesById, getTermsById } from '../../lib/services';
 
 interface Props {
-  userKey: string,
+  match: any,
 }
 
 class App extends Component
@@ -27,13 +28,13 @@ class App extends Component
 
   componentDidMount() {
     const getModuleData = async () => {
-      const { userKey } = this.props;
+      const { match } = this.props;
       const output: any = [];
       // each get Function is async, thus necessitate nested callback
       // Get student's enrolled modules, then find details of each module
       // then get each module's term details
       // equivalent to studentmodules inner join modules inner join term
-      getStudentModules((userKey), (arrayOfLecturerModuleIds:any[]) => {
+      getStudentModules((match.params.userKey), (arrayOfLecturerModuleIds:any[]) => {
         getModulesById(arrayOfLecturerModuleIds, (arrayOfModules:any[]) => {
           const arrayOfTermIds: any[] = [];
           arrayOfModules.forEach((module:any) => arrayOfTermIds.push(module.term));
@@ -61,6 +62,8 @@ class App extends Component
 
   render() {
     const { moduleData } = this.state;
+    const { match } = this.props;
+    const { Title } = Typography;
     const columns = [
       {
         title: 'Module Code',
@@ -86,7 +89,7 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/lecturerAssignmentList/${record.key}`;
+          const path = `/lecturerListModuleAssignmnts/${match.params.userKey}/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">
@@ -103,8 +106,9 @@ class App extends Component
           className="site-page-header"
           title="Lecturer Homepage"
         />
-        <br />
-        <br />
+        <Space>
+          <Title level={5}>Select a module from the table below</Title>
+        </Space>
         <Table
           columns={columns}
           dataSource={moduleData}

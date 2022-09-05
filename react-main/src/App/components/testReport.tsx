@@ -111,9 +111,9 @@ class App extends Component
     } = parsedReport;
 
     if (mode === 'lecturer') {
-      returnPath = `/viewSubmission/${key}`;
+      returnPath = `/viewSubmission/${match.params.userKey}/${key}`;
     } else if (mode === 'fromList') {
-      returnPath = `/ViewStudentSubmissions/${assignmentId}`;
+      returnPath = `/lecturerListStudentSubmissions/${match.params.userKey}/${assignmentId}`;
     } else {
       returnPath = `/studentAssignment/${userKey}/${assignmentId}`;
     }
@@ -168,7 +168,7 @@ class App extends Component
       );
     }
 
-    if (parsedReport === undefined || parsedReport === '') {
+    if ((parsedReport === undefined || parsedReport === '') && (compileErrMsg === '')) {
       return (
         <div>
           <PageHeader
