@@ -155,80 +155,67 @@ class App extends Component
           className="site-page-header"
           title="Add a new assignment"
         />
-        Assignment Name:
-        <Input id="title" value={title} onChange={this.handleChange} placeholder="Assignment Name" allowClear />
-        <br />
-        <br />
-        Module:
-        <Input.Group>
-          <Select id="module" style={{ minWidth: 500 }} value={module} onChange={this.handleModuleChange} placeholder="Select a module">
-            {moduleItems}
-          </Select>
-        </Input.Group>
-        <br />
-        Assignment Instruction:
-        <TextArea id="descr" value={descr} onChange={this.handleChange} rows={5} placeholder="Enter assignment instruction here" />
-        <br />
-        <br />
-        <Space>
-          { 'Start Datetime: ' }
-          <DatePicker allowClear={false} id="start" value={moment(start)} showTime minuteStep={5} secondStep={60} onChange={this.handleStartChange} />
+        <Space style={{ marginLeft: '20px', minWidth: '1200px' }} size="small" direction="vertical">
+          Assignment Name:
+          <Input id="title" value={title} onChange={this.handleChange} placeholder="Assignment Name" allowClear />
+          Module:
+          <Input.Group>
+            <Select id="module" style={{ minWidth: 500 }} value={module} onChange={this.handleModuleChange} placeholder="Select a module">
+              {moduleItems}
+            </Select>
+          </Input.Group>
+          Assignment Instruction:
+          <TextArea id="descr" value={descr} onChange={this.handleChange} rows={5} placeholder="Enter assignment instruction here" />
+          <Space>
+            { 'Start Datetime: ' }
+            <DatePicker allowClear={false} id="start" value={moment(start)} showTime minuteStep={5} secondStep={60} onChange={this.handleStartChange} />
+            <br />
+            { 'End Datetime: ' }
+            <DatePicker allowClear={false} id="end" value={moment(end)} showTime minuteStep={5} secondStep={60} onChange={this.handleEndChange} />
+          </Space>
+          Solution code:
+          <TextArea
+            id="solution"
+            value={solution}
+            onChange={this.handleChange}
+            rows={5}
+            placeholder="Enter assignment solution here, class name must be 'Solution'"
+          />
+          Unit Test Code:
+          <TextArea
+            id="testCase"
+            value={testCase}
+            onChange={this.handleChange}
+            rows={5}
+            placeholder="Enter JUnit Unit Test Class here, class name must be 'Tester'"
+          />
+          Entry method name:
+          <Input
+            id="methodName"
+            value={methodName}
+            onChange={this.handleChange}
+            placeholder="Enter name of method for tester to start testing"
+            allowClear
+          />
+          Skeleton Code for students:
+          <TextArea
+            id="skeletonCode"
+            value={skeletonCode}
+            onChange={this.handleChange}
+            rows={5}
+            placeholder="Enter Skeleton Code for students' submission class.
+            Class name must be 'Submission'.
+            Method name must match with method name entered above.
+            Method signature must be given and matches solution method."
+          />
           <br />
-          { 'End Datetime: ' }
-          <DatePicker allowClear={false} id="end" value={moment(end)} showTime minuteStep={5} secondStep={60} onChange={this.handleEndChange} />
+          <Space size="large">
+            <Button type="primary" onClick={this.handleAssignmentSubmit}>Add Assignment</Button>
+            <Button><Link to="/admin">Return to Administrator page</Link></Button>
+          </Space>
+          <br />
+          { statusMsg }
         </Space>
-        <br />
-        <br />
-        Solution code:
-        <TextArea
-          id="solution"
-          value={solution}
-          onChange={this.handleChange}
-          rows={5}
-          placeholder="Enter assignment solution here, class name must be 'Solution'"
-        />
-        <br />
-        <br />
-        Unit Test Code:
-        <TextArea
-          id="testCase"
-          value={testCase}
-          onChange={this.handleChange}
-          rows={5}
-          placeholder="Enter JUnit Unit Test Class here, class name must be 'Tester'"
-        />
-        <br />
-        <br />
-        Entry method name:
-        <Input
-          id="methodName"
-          value={methodName}
-          onChange={this.handleChange}
-          placeholder="Enter name of method for tester to start testing"
-          allowClear
-        />
-        <br />
-        <br />
-        Skeleton Code for students:
-        <TextArea
-          id="skeletonCode"
-          value={skeletonCode}
-          onChange={this.handleChange}
-          rows={5}
-          placeholder="Enter Skeleton Code for students' submission class.
-          Class name must be 'Submission'.
-          Method name must match with method name entered above.
-          Method signature must be given and matches solution method."
-        />
-        <br />
-        <br />
-        <Space size="large">
-          <Button type="primary" onClick={this.handleAssignmentSubmit}>Add Assignment</Button>
-          <Button><Link to="/admin">Return to Administrator page</Link></Button>
-        </Space>
-        <br />
-        <br />
-        { statusMsg }
       </div>
     );
   }

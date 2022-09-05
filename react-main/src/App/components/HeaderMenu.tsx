@@ -8,6 +8,7 @@ import { loginRequest } from '../../lib/authConfig';
 import '../css/App.css';
 
 interface Props {
+  userKey: string,
   role: string[],
 }
 
@@ -18,7 +19,7 @@ function handleLogout(instance:any) {
 }
 
 function MyComponent(props: Props) {
-  const { role } = props;
+  const { userKey, role } = props;
   const { instance } = useMsal();
   const menuItems:any = [
     <Menu.Item key="1">
@@ -38,14 +39,14 @@ function MyComponent(props: Props) {
       menuItems.push(
         <Menu.Item key="3">
           <Link to="/lecturer" />
-          Modules (Lecturer)
+          Lecturer
         </Menu.Item>,
       );
     } else if (role[i] === 'student') {
       menuItems.push(
         <Menu.Item key="2">
-          <Link to="/student" />
-          Modules
+          <Link to={`/student/${userKey}`} />
+          Student
         </Menu.Item>,
       );
     }

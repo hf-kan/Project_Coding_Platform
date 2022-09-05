@@ -165,11 +165,39 @@ function getAssignmentsByIdFiltered(Id: any[], callBack:Function) {
     });
 }
 
+function getAssignmentsStartEnd(Id: any[], callBack:Function) {
+  axios.get('http://localhost:8080/getAssignmentsStartEnd/query', {
+    params: {
+      ObjectId: Id,
+    },
+    paramsSerializer: (params) => qs.stringify(params),
+  })
+    .then((res) => {
+      const rawData = res.data;
+      const output = JSON.parse(JSON.stringify(rawData));
+      callBack(output);
+    });
+}
+
 function getSubmissionsByUserAssignment(userKey: any[], assignmentId: any[], callBack:Function) {
   axios.get('http://localhost:8080/submissions/queryByUserAssignment', {
     params: {
       userKey,
       assignmentId,
+    },
+    paramsSerializer: (params) => qs.stringify(params),
+  })
+    .then((res) => {
+      const rawData = res.data;
+      const output = JSON.parse(JSON.stringify(rawData));
+      callBack(output);
+    });
+}
+
+function getSubmissionsByUser(userKey: any[], callBack:Function) {
+  axios.get('http://localhost:8080/submissions/queryByUser', {
+    params: {
+      userKey,
     },
     paramsSerializer: (params) => qs.stringify(params),
   })
@@ -268,6 +296,8 @@ export {
   getOneModuleAssignments,
   getAssignmentsById,
   getAssignmentsByIdFiltered,
+  getAssignmentsStartEnd,
+  getSubmissionsByUser,
   getSubmissionsByUserAssignment,
   getSubmissionsByAssignment,
   getSubmissionById,

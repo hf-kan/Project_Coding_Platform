@@ -61,7 +61,6 @@ class App extends Component
 
   render() {
     const { moduleData } = this.state;
-    const { userKey } = this.props;
     const columns = [
       {
         title: 'Module Code',
@@ -87,7 +86,7 @@ class App extends Component
         title: 'Action',
         key: 'action',
         render: (_:any, record:any) => {
-          const path = `/lecturerAssignmentList/${userKey}/${record.key}`;
+          const path = `/lecturerAssignmentList/${record.key}`;
           return (
             <Space size="middle">
               <Button type="primary">
@@ -102,7 +101,7 @@ class App extends Component
       <div>
         <PageHeader
           className="site-page-header"
-          title="Modules (Lecturer)"
+          title="Lecturer Homepage"
         />
         <br />
         <br />

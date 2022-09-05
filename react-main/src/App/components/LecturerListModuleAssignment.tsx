@@ -38,8 +38,8 @@ class App extends Component
             output.push({
               key: item._id,
               title: item.title,
-              start: startDate.toUTCString(),
-              end: endDate.toUTCString(),
+              start: startDate.toLocaleString(),
+              end: endDate.toLocaleString(),
               duration: Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
             });
           });

@@ -1,13 +1,9 @@
 import axios from 'axios';
 
-function addNewModule(module:object) {
+function addNewModule(module:object, callBack: Function) {
   axios.post('http://localhost:8080/modules/add', module)
     .then((res) => {
-      if (res.status === 200) {
-        console.log(res.data);
-      } else {
-        console.log(`${res.status}: ${res.data}`);
-      }
+      callBack(res);
     });
 }
 
@@ -36,9 +32,25 @@ function getAllModules(callback: Function) {
     });
 }
 
+function addNewTerm(term:object, callBack: Function) {
+  axios.post('http://localhost:8080/terms/add', term)
+    .then((res) => {
+      callBack(res);
+    });
+}
+
+function addNewUser(user:object, callBack: Function) {
+  axios.post('http://localhost:8080/users/add', user)
+    .then((res) => {
+      callBack(res);
+    });
+}
+
 export {
   addNewModule,
   getAllTerm,
   getAllModules,
   addNewAssignment,
+  addNewTerm,
+  addNewUser,
 };

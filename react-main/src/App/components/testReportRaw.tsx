@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
   PageHeader,
-  Space,
-  Table,
+  Input,
   Button,
   Typography,
+  Space,
 } from 'antd';
 
 import { Link } from 'react-router-dom';
@@ -16,8 +16,6 @@ import {
   getUserPersonalInfo,
 } from '../../lib/services';
 
-import parseJUnitReportXML from '../../lib/parseJUnitReportXML';
-
 interface Props {
   match: any,
 }
@@ -25,13 +23,12 @@ interface Props {
 class App extends Component
 <Props, {
   userName:string,
-  userKey:string,
   assignmentId:string,
   assignmentName:string,
   moduleName:string,
   asgnStatus:string,
   score:string,
-  parsedReport:any,
+  rawReport:any,
   compileError:string,
   loading:boolean,
 }> {
@@ -39,13 +36,12 @@ class App extends Component
     super(props);
     this.state = {
       userName: '',
-      userKey: '',
       assignmentId: '',
       assignmentName: '',
       moduleName: '',
       asgnStatus: '',
       score: '',
-      parsedReport: '',
+      rawReport: '',
       compileError: '',
       loading: true,
     };
@@ -60,17 +56,15 @@ class App extends Component
             getUserPersonalInfo((submission[0].userKey), (user:any) => {
               this.setState({
                 userName: user.username,
-                userKey: user.id,
                 moduleName: `${modules[0].moduleId} ${modules[0].name}`,
-                assignmentId: submission[0].assignmentId,
                 assignmentName: assignment[0].title,
                 score: submission[0].score,
                 asgnStatus: submission[0].status,
                 compileError: submission[0].compileError,
+                assignmentId: submission[0].assignmentId,
               });
               if (submission[0].graderXML !== undefined) {
-                const parsedReport = parseJUnitReportXML(submission[0].graderXML);
-                this.setState({ parsedReport, loading: false });
+                this.setState({ rawReport: submission[0].graderXML, loading: false });
               } else {
                 this.setState({ loading: false });
               }
@@ -83,39 +77,29 @@ class App extends Component
   }
 
   render() {
-    let returnPath:string;
+    const { TextArea } = Input;
     const { Title } = Typography;
     const { match } = this.props;
     const { mode, key } = match.params;
 
     const {
       userName,
-      userKey,
       assignmentId,
       assignmentName,
       moduleName,
       asgnStatus,
       score,
-      parsedReport,
+      rawReport,
       compileError,
       loading,
     } = this.state;
 
-    const {
-      totalTest,
-      skippedTest,
-      failedTest,
-      errorTest,
-      successTest,
-      testCases,
-    } = parsedReport;
+    let returnPath:string;
 
     if (mode === 'lecturer') {
       returnPath = `/viewSubmission/${key}`;
-    } else if (mode === 'fromList') {
-      returnPath = `/ViewStudentSubmissions/${assignmentId}`;
     } else {
-      returnPath = `/studentAssignment/${userKey}/${assignmentId}`;
+      returnPath = `/ViewStudentSubmissions/${assignmentId}`;
     }
 
     let compileErrMsg:string;
@@ -124,35 +108,6 @@ class App extends Component
     } else {
       compileErrMsg = compileError;
     }
-
-    const columns = [
-      {
-        title: 'Test No.',
-        dataIndex: 'key',
-        key: 'key',
-      },
-      {
-        title: 'Test Name',
-        dataIndex: 'testCaseName',
-        key: 'testCaseName',
-      },
-      {
-        title: 'Test Status',
-        dataIndex: 'status',
-        key: 'status',
-      },
-      {
-        title: 'Details',
-        dataIndex: 'message',
-        key: 'message',
-      },
-      {
-        title: 'Run Duration (s)',
-        dataIndex: 'executionTime',
-        key: 'executionTime',
-      },
-    ];
-
     if (loading) {
       return (
         <div>
@@ -168,7 +123,7 @@ class App extends Component
       );
     }
 
-    if (parsedReport === undefined || parsedReport === '') {
+    if (rawReport === undefined || rawReport === '') {
       return (
         <div>
           <PageHeader
@@ -182,60 +137,53 @@ class App extends Component
         </div>
       );
     }
+
     return (
       <div>
         <PageHeader
           className="site-page-header"
-          title="Assignment Auto-marker Report"
+          title="Assignment Auto-marker Report (Raw Output)"
         />
         <Button size="large" style={{ marginLeft: '20px' }}>
           <Link to={returnPath}>Return</Link>
         </Button>
         <br />
         <br />
-        <b>{ 'Username: '}</b>
-        { userName }
+        <Space>
+          <b>{ 'Username: '}</b>
+          { userName }
+          <b>{ 'Assignment: ' }</b>
+          { assignmentName }
+          <b>{ 'Module: '}</b>
+          { moduleName }
+        </Space>
         <br />
-        <b>{ 'Assignment: ' }</b>
-        { assignmentName }
-        <br />
-        <b>{ 'Module: '}</b>
-        { moduleName }
-        <br />
-        <br />
-        <b>{ 'Assignment Status: '}</b>
-        { asgnStatus }
-        <br />
-        <b>{ 'Score: '}</b>
-        { score }
+        <Space>
+          <b>{ 'Assignment Status: '}</b>
+          { asgnStatus }
+          <b>{ 'Score: '}</b>
+          { score }
+        </Space>
         <br />
         <b>{ 'Compile Error: '}</b>
         { compileErrMsg }
         <br />
         <br />
-        <Title level={5}>Test Results Details:</Title>
-        <Space>
-          { 'Number of test cases: '}
-          { totalTest }
-          <br />
-          { 'Success: '}
-          { successTest }
-          <br />
-          { 'Failed: '}
-          { failedTest }
-          <br />
-          { 'Failed (Error): '}
-          { errorTest }
-          <br />
-          { 'Skipped: '}
-          { skippedTest }
-          <br />
-        </Space>
-        <br />
-        <Table
-          columns={columns}
-          dataSource={testCases}
-        />
+        <Title level={5}>Raw Report</Title>
+        <div
+          style={{
+            overflow: 'auto',
+            height: '36em',
+          }}
+        >
+          <TextArea
+            id="autoGraderResult"
+            value={rawReport}
+            readOnly
+            rows={22}
+            placeholder="Raw Report is displayed here."
+          />
+        </div>
       </div>
     );
   }

@@ -19,6 +19,7 @@ function parseJUnitReportXML(rawReport:string) {
     let message;
     let testCaseName;
     let executionTime;
+    const countForDisplay = i + 1;
     const firstNodeName = immediateChild.nodeName;
     switch (firstNodeName) {
       case 'failure': {
@@ -51,7 +52,7 @@ function parseJUnitReportXML(rawReport:string) {
       }
     }
     const testCase = {
-      key: i,
+      key: countForDisplay,
       testCaseName,
       status,
       message,

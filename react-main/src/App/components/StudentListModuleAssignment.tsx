@@ -4,6 +4,7 @@ import {
   Space,
   Table,
   Button,
+  Typography,
 } from 'antd';
 
 import { Link } from 'react-router-dom';
@@ -38,8 +39,8 @@ class App extends Component
             output.push({
               key: item._id,
               title: item.title,
-              start: startDate.toUTCString(),
-              end: endDate.toUTCString(),
+              start: startDate.toLocaleString(),
+              end: endDate.toLocaleString(),
               duration: Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
             });
           });
@@ -56,6 +57,7 @@ class App extends Component
   render() {
     const { assignmentData, moduleName } = this.state;
     const { match } = this.props;
+    const { Title } = Typography;
     const columns = [
       {
         title: 'Assignment',
@@ -76,6 +78,16 @@ class App extends Component
         title: 'Duration (mins)',
         dataIndex: 'duration',
         key: 'duration',
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+      },
+      {
+        title: 'Score',
+        dataIndex: 'score',
+        key: 'score',
       },
       {
         title: 'Action',
@@ -99,8 +111,13 @@ class App extends Component
           title="Assignments"
           subTitle={`${moduleName}`}
         />
-        <br />
-        <br />
+        <Space direction="vertical" size="small">
+          <Button size="large">
+            <Link to={`/student/${match.params.userKey}`}>Return to Student Homepage</Link>
+          </Button>
+          <br />
+          <Title level={5}>Select an assignment from the table below to continue:</Title>
+        </Space>
         <Table
           columns={columns}
           dataSource={assignmentData}

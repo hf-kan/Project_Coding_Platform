@@ -20,6 +20,7 @@ import {
 import { AxiosResponse } from 'axios';
 
 import {
+  getAssignmentsStartEnd,
   getAssignmentsByIdFiltered,
   getSubmissionsByUserAssignment,
   addSubmission,
@@ -55,9 +56,15 @@ class App extends Component
   countDown:any,
   intervalId:any,
   notStart:boolean,
+  expiredBeforeStart:boolean,
   module:any,
+  submitMessage:string,
+  reloadConfirmVisible:boolean,
+  loading:boolean,
 }> {
   submissionDocument: any;
+
+  skeletonCode: any;
 
   timer: Function;
 
@@ -81,26 +88,58 @@ class App extends Component
       countDown: 0,
       intervalId: 0,
       notStart: true,
+      expiredBeforeStart: false,
       module: '',
+      submitMessage: '',
+      reloadConfirmVisible: false,
+      loading: true,
     };
     this.submissionDocument = {};
+    this.skeletonCode = '';
     this.timer = () => {
+      // this timer is not loaded if assignment is not available yet
+      const { expiredBeforeStart, end } = this.state;
       // get Datetime from backend server to prevent cheating by altering local datetime
-      const { end } = this.state;
       getCurrentDateTime((curr:any) => {
         const currDate:Date = new Date(curr);
         const count:number = end.getTime() - currDate.getTime();
         if (count <= 0) {
-          this.setState({
-            countDown: 0,
-            readOnly: true,
-          });
+          if (!expiredBeforeStart) {
+            // trigger autosave when time is up
+            // do not trigger if the assignment has expired already when first loading the page
+            const { code } = this.state;
+            this.submissionDocument.programCode = code;
+            submitSubmission(this.submissionDocument, (res:AxiosResponse) => {
+              if (res.status === 200) {
+                this.submissionDocument = res.data;
+                this.setState({
+                  countDown: 0,
+                  statusMessage: 'Time is up, your solution has been automatically submitted',
+                  readOnly: true,
+                });
+              } else {
+                this.setState({
+                  countDown: 0,
+                  statusMessage: `Time is up, but submission failed: ${res.data}`,
+                  readOnly: true,
+                });
+              }
+            });
+          } else {
+            // set page to read only for expired assignments
+            this.setState({
+              countDown: 0,
+              readOnly: true,
+            });
+          }
         } else {
+          // enable page interaction when assignment is open for submission
           this.setState({
             countDown: count,
             readOnly: false,
             statusMessage: '',
             hideReportButton: true,
+            loading: false,
           });
         }
       });
@@ -114,98 +153,123 @@ class App extends Component
     const getAssignmentData = async () => {
       const { match } = this.props;
       let assignment: any;
+      let startEnd: any;
       let submissionFromDB: any[] = [];
       let statusMessage:string = '';
       let hideReportButton:boolean = true;
-      getAssignmentsByIdFiltered((match.params.key), (assignmentArray:any) => {
-        // load assignment details
-        [assignment] = assignmentArray;
-        const start:Date = new Date(assignment.start);
-        const end:Date = new Date(assignment.end);
+      getAssignmentsStartEnd((match.params.key), (startEndArray:any) => {
+        [startEnd] = startEndArray;
+        const start:Date = new Date(startEnd.start);
+        const end:Date = new Date(startEnd.end);
         getCurrentDateTime((curr:any) => {
           const currDate:Date = new Date(curr);
+          let expired: boolean;
+          if (currDate >= end) {
+            expired = true;
+          } else {
+            expired = false;
+          }
           if (currDate >= start) {
-            this.setState({
-              assignmentName: assignment.title,
-              assignmentDescr: assignment.descr,
-              start,
-              end,
-              notStart: false,
-              module: assignment.module,
-            });
-            const intervalId = setInterval(this.timer, 1000);
-            this.setState({ intervalId });
-            getSubmissionsByUserAssignment(
-              // try to load students' submission
-              (match.params.userKey),
-              (match.params.key),
-              (arrayOfSubmissions:any[]) => {
-                const { readOnly } = this.state;
-                if (arrayOfSubmissions.length === 0 && !readOnly) {
-                  // No existing submission, create a submission in database
-                  // and load skeleton code
-                  const message: any[] = [{
-                    assignmentId: match.params.key,
-                    userKey: match.params.userKey,
-                    programCode: assignment.skeletonCode,
-                  }];
-                  addSubmission(message, (res:AxiosResponse) => {
-                    if (res.status === 200) {
-                      this.submissionDocument = res.data;
-                    } else {
-                      this.setState({ statusMessage: `Error communicating with Database: ${res.data}` });
-                    }
-                    this.setState({
-                      code: this.submissionDocument.programCode,
-                      statusMessage: '',
-                    });
-                  });
-                } else if (arrayOfSubmissions.length !== 0 && !readOnly) {
-                  [submissionFromDB] = arrayOfSubmissions;
-                  this.submissionDocument = submissionFromDB;
-                  // submission already exists
-                  // update lastupdatedtm only and load skeleton code if code is empty
-                  updateSubmission(submissionFromDB, (res:AxiosResponse) => {
-                    if (res.status === 200) {
-                      this.submissionDocument = res.data;
-                      if (this.submissionDocument.programCode.length === 0) {
-                        this.submissionDocument.programCode = assignment.skeletonCode;
+            // load assignment details
+            getAssignmentsByIdFiltered((match.params.key), (assignmentArray:any) => {
+              [assignment] = assignmentArray;
+              // not loading almost anything to state if the assignment hasn't started yet
+              this.skeletonCode = assignment.skeletonCode;
+              this.setState({
+                assignmentName: assignment.title,
+                assignmentDescr: assignment.descr,
+                start,
+                end,
+                notStart: false,
+                expiredBeforeStart: expired,
+                module: assignment.module,
+              });
+              const intervalId = setInterval(this.timer, 1000);
+              this.setState({ intervalId });
+              getSubmissionsByUserAssignment(
+                // try to load students' submission
+                (match.params.userKey),
+                (match.params.key),
+                (arrayOfSubmissions:any[]) => {
+                  if (arrayOfSubmissions.length === 0 && !expired) {
+                    // No existing submission, create a submission in database
+                    // and load skeleton code
+                    // only if the assignment is not expired
+                    const message: any[] = [{
+                      assignmentId: match.params.key,
+                      userKey: match.params.userKey,
+                      programCode: assignment.skeletonCode,
+                    }];
+                    addSubmission(message, (res:AxiosResponse) => {
+                      if (res.status === 200) {
+                        this.submissionDocument = res.data;
+                      } else {
+                        this.setState({ statusMessage: `Error communicating with Database: ${res.data}` });
                       }
-                    } else {
-                      this.setState({ statusMessage: `Error communicating with Database: ${res.data}` });
-                    }
-                    this.setState({
-                      code: this.submissionDocument.programCode,
-                      statusMessage: '',
+                      this.setState({
+                        code: this.submissionDocument.programCode,
+                        statusMessage: '',
+                      });
                     });
-                  });
-                } else {
-                  // read only
-                  let programCode:string = assignment.skeletonCode;
-                  if (arrayOfSubmissions.length !== 0) {
+                  } else if (arrayOfSubmissions.length !== 0 && !expired) {
+                    // submission already exists
+                    // update lastupdatedtm only and load skeleton code if code is empty
+                    // only if the assignment is not expired
                     [submissionFromDB] = arrayOfSubmissions;
                     this.submissionDocument = submissionFromDB;
-                    programCode = this.submissionDocument.programCode;
-                    if (this.submissionDocument.status === 'Graded') {
-                      statusMessage = 'This assignment has been graded. Click on the button to view report';
-                      hideReportButton = false;
-                    } else if (this.submissionDocument.status === 'Submitted') {
-                      statusMessage = 'This assignment has been submitted. Pending for grading';
+                    updateSubmission(submissionFromDB, (res:AxiosResponse) => {
+                      if (res.status === 200) {
+                        this.submissionDocument = res.data;
+                        if (this.submissionDocument.programCode.length === 0) {
+                          this.submissionDocument.programCode = assignment.skeletonCode;
+                        }
+                      } else {
+                        this.setState({ statusMessage: `Error communicating with Database: ${res.data}` });
+                      }
+                      this.setState({
+                        code: this.submissionDocument.programCode,
+                        statusMessage: '',
+                      });
+                    });
+                  } else {
+                    // assignment already expired
+                    // still load skeleton code even if there is no submission
+                    let programCode:string = assignment.skeletonCode;
+                    if (arrayOfSubmissions.length !== 0) {
+                      [submissionFromDB] = arrayOfSubmissions;
+                      this.submissionDocument = submissionFromDB;
+                      programCode = this.submissionDocument.programCode;
+                      if (this.submissionDocument.status === 'Graded') {
+                        statusMessage = 'This assignment has been graded. Click on the button to view report';
+                        hideReportButton = false;
+                      } else if (this.submissionDocument.status === 'Submitted' || this.submissionDocument.status === 'InProgress') {
+                        // InProgress is also treated as submitted if time is up
+                        statusMessage = 'This assignment has been submitted. Pending for grading';
+                      } else {
+                        // any other status
+                        statusMessage = 'This assignment is closed';
+                      }
                     } else {
+                      // No submission found
                       statusMessage = 'This assignment is closed';
                     }
+                    this.setState({
+                      code: programCode,
+                      statusMessage,
+                      hideReportButton,
+                      loading: false,
+                    });
                   }
-                  this.setState({
-                    code: programCode,
-                    statusMessage,
-                    hideReportButton,
-                  });
-                }
-              },
-            );
+                },
+              );
+            });
           } else {
             this.setState({
-              module: assignment.module,
+              // assignment not started
+              // only load module for redirection button and start datetime for display
+              module: startEnd.module,
+              start,
+              loading: false,
             });
           }
         });
@@ -224,6 +288,7 @@ class App extends Component
     const {
       assignmentName,
       assignmentDescr,
+      start,
       code,
       testCase,
       runResult,
@@ -237,6 +302,9 @@ class App extends Component
       countDown,
       notStart,
       module,
+      submitMessage,
+      reloadConfirmVisible,
+      loading,
     } = this.state;
     const { TextArea } = Input;
     const assignmentInstruction:string = assignmentDescr;
@@ -246,7 +314,7 @@ class App extends Component
       if (!waiting) {
         this.setState({ waiting: true, waitErrorMessage: '' });
         this.submissionDocument.programCode = code;
-        const waitMsg = 'Please wait...';
+        const waitMsg = 'Test Run has started, please wait for your output...';
         this.setState({ runResult: waitMsg });
         testRun(
           testCase,
@@ -263,17 +331,20 @@ class App extends Component
 
     const submitAssignment = () => {
       this.setState({ submitAnimation: true });
+      this.submissionDocument.programCode = code;
       submitSubmission(this.submissionDocument, (res:AxiosResponse) => {
+        const currDateTime:string = new Date().toLocaleString();
         if (res.status === 200) {
           this.submissionDocument = res.data;
           this.setState({
-            statusMessage: 'Submission successful!',
-            readOnly: true,
+            submitAnimation: false,
+            submitMessage: `Solution submitted at: ${currDateTime}`,
+            submitConfirmVisible: false,
           });
         } else {
           this.setState({
             submitAnimation: false,
-            statusMessage: `Submission Error: ${res.data}`,
+            submitMessage: `Submission failed: ${res.data}`,
             submitConfirmVisible: false,
           });
         }
@@ -281,8 +352,24 @@ class App extends Component
     };
 
     const { match } = this.props;
-    const path = `/assignmentList/${match.userKey}/${module}`;
+    const path = `/assignmentList/${match.params.userKey}/${module}`;
 
+    if (loading) {
+      return (
+        <div>
+          <PageHeader
+            className="site-page-header"
+            title="Loading Assignment..."
+          />
+          <Button size="large" style={{ marginLeft: '20px' }}>
+            <Link to={path}>Return to Assignment List</Link>
+          </Button>
+          <br />
+        </div>
+      );
+    }
+
+    // Display for loading an assignment that is not started yet
     if (notStart) {
       return (
         <Space direction="vertical" size="large">
@@ -291,7 +378,10 @@ class App extends Component
               className="site-page-header"
               title="This assignment is not available yet"
             />
-            <br />
+            <p style={{ marginLeft: '20px' }}>
+              {'This assignment will be available at: '}
+              <b>{`${start.toLocaleString()}`}</b>
+            </p>
             <Button type="primary" style={{ marginLeft: 20 }}>
               <Link to={path}>Return to Assignment List</Link>
             </Button>
@@ -300,12 +390,9 @@ class App extends Component
       );
     }
 
+    // Display of main assignment page (only if it is open or expired)
     return (
       <div>
-        <PageHeader
-          className="site-page-header"
-          title="Assignment"
-        />
         <Layout>
           <Sider width="300" theme="light">
             <Space
@@ -315,6 +402,10 @@ class App extends Component
                 display: 'flex',
               }}
             >
+              <PageHeader
+                className="site-page-header"
+                title="Assignment (Java)"
+              />
               <h3>
                 {assignmentTitle}
               </h3>
@@ -335,12 +426,38 @@ class App extends Component
                 </Button>
                 <br />
                 <Timer countDown={countDown} />
-                <h2> Enter your solution below </h2>
+                <Space size="large">
+                  <h2> Enter your solution below </h2>
+                  <Popconfirm
+                    title="Confirm to reload?"
+                    okText="Yes"
+                    placement="rightBottom"
+                    cancelButtonProps={{ size: 'middle' }}
+                    visible={reloadConfirmVisible}
+                    onConfirm={() => {
+                      this.setState({ code: this.skeletonCode, reloadConfirmVisible: false });
+                    }}
+                    okButtonProps={{
+                      size: 'middle',
+                      loading: submitAnimation,
+                    }}
+                    onCancel={() => { this.setState({ reloadConfirmVisible: false }); }}
+                  >
+                    <Button
+                      hidden={readOnly}
+                      onClick={() => {
+                        this.setState({ reloadConfirmVisible: true });
+                      }}
+                    >
+                      Reload Skeleton Code
+                    </Button>
+                  </Popconfirm>
+                </Space>
                 <div
                   className="code"
                   style={{
                     overflow: 'auto',
-                    height: '15em',
+                    height: '26em',
                   }}
                 >
                   <CodeEditor
@@ -357,10 +474,11 @@ class App extends Component
                       fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                       overflow: 'hidden',
                       boxSizing: 'border-box',
-                      minHeight: '15em',
+                      minHeight: '25em',
                     }}
                   />
                 </div>
+                <p>{submitMessage}</p>
                 <div className="submit-panel">
                   <Row gutter={
                     {
@@ -372,11 +490,11 @@ class App extends Component
                   }
                   >
                     <Col flex="auto">
-                      Test Case:
+                      Enter your input for Test Run:
                       <br />
                       <TextArea
                         className="testCase-textArea"
-                        placeholder="Enter your test case here"
+                        placeholder="Enter your inputs here, separate each parameter input with a comma. E.g.: 1,2,3,4,5"
                         bordered
                         readOnly={readOnly}
                         value={testCase}
@@ -405,6 +523,7 @@ class App extends Component
                       <Space size="middle" direction="vertical">
                         <Row align="middle">
                           <Button
+                            size="large"
                             block
                             hidden={readOnly}
                             onClick={testRunAssignment}
@@ -415,23 +534,24 @@ class App extends Component
                         <Row align="middle">
                           <Popconfirm
                             title="Confirm to submit?"
+                            okText="Submit"
+                            placement="leftBottom"
+                            cancelButtonProps={{ size: 'middle' }}
                             visible={submitConfirmVisible}
                             onConfirm={submitAssignment}
                             okButtonProps={{
+                              size: 'middle',
                               loading: submitAnimation,
                             }}
                             onCancel={() => { this.setState({ submitConfirmVisible: false }); }}
                           >
                             <Button
                               type="primary"
+                              size="large"
                               block
                               hidden={readOnly}
                               onClick={() => {
-                                if (this.submissionDocument.status !== 'InProgress') {
-                                  this.setState({ statusMessage: 'This assignment has been submitted and can no longer be modified' });
-                                } else {
-                                  this.setState({ submitConfirmVisible: true });
-                                }
+                                this.setState({ submitConfirmVisible: true });
                               }}
                             >
                               Submit!

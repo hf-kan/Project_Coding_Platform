@@ -9,7 +9,7 @@ import fs from 'fs';
 import xml2js from 'xml2js';
 
 import UserModel from './models/userModel';
-import termModel from './models/termModel';
+import TermModel from './models/termModel';
 import ModuleModel from './models/modulesModel';
 import AssignmentModel from './models/assignmentModel';
 import SubmissionModel from './models/submissionModel';
@@ -48,19 +48,34 @@ app.get(
   },
 );
 
-app.post('/add_user', async (request, response) => {
-  const user = new UserModel(request.body);
-  await user.save().then(
-    (savedDoc) => { response.status(200).send(savedDoc); },
+app.post('/users/add', async (request, response) => {
+  const {
+    username,
+    userId,
+    name,
+    role,
+    lecturerMod,
+    studentMod,
+  } = request.body[0];
+  const newUser = new UserModel({
+    username,
+    userId,
+    name,
+    role,
+    lecturerMod,
+    studentMod,
+  });
+  await newUser.save().then(
+    (savedDoc:any) => { response.status(200).send(savedDoc); },
   ).catch(
-    (error) => { response.status(500).send(error); },
+    (error:any) => { response.status(500).send(error); },
   );
 });
 
 app.get('/assignment/module/:moduleKey', async (request, response) => {
   try {
     AssignmentModel.find({ module: request.params.moduleKey })
-      .select('title module descr start end skeletonCode')
+      .select('title module start end')
       .exec().then((data) => {
         if (!data) {
           response.status(200).send([]);
@@ -92,6 +107,23 @@ app.get('/getAssignmentsBasic/query', async (request, response) => {
     AssignmentModel.find(
       { _id: request.query.ObjectId },
     ).select('title module descr start end skeletonCode').setOptions(
+      getOption,
+    ).exec()
+      .then((data) => {
+        if (!data) {
+          response.status(200).send([]);
+        } else response.status(200).send(data);
+      });
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
+app.get('/getAssignmentsStartEnd/query', async (request, response) => {
+  try {
+    AssignmentModel.find(
+      { _id: request.query.ObjectId },
+    ).select('module start end').setOptions(
       getOption,
     ).exec()
       .then((data) => {
@@ -226,7 +258,7 @@ app.get('/getModuleStudents', async (request, response) => {
 
 app.get('/terms', async (request, response) => {
   try {
-    termModel.find({}).exec().then((data) => {
+    TermModel.find({}).sort({ year: -1 }).exec().then((data) => {
       if (!data) {
         response.status(200).send([]);
       } else response.status(200).send(data);
@@ -236,13 +268,36 @@ app.get('/terms', async (request, response) => {
   }
 });
 
+app.post('/terms/add', async (request, response) => {
+  const {
+    year,
+    term,
+    startdate,
+    enddate,
+  } = request.body[0];
+  const newTerm = new TermModel({
+    year,
+    term,
+    startdate,
+    enddate,
+  });
+  await newTerm.save().then(
+    (savedDoc:any) => { response.status(200).send(savedDoc); },
+  ).catch(
+    (error:any) => { response.status(500).send(error); },
+  );
+});
+
 app.get('/getAllModules', async (request, response) => {
   try {
-    ModuleModel.find({}).exec().then((data) => {
-      if (!data) {
-        response.status(200).send([]);
-      } else response.status(200).send(data);
-    });
+    ModuleModel.find({}).sort({ moduleId: 1 }).setOptions(
+      getOption,
+    ).exec()
+      .then((data) => {
+        if (!data) {
+          response.status(200).send([]);
+        } else response.status(200).send(data);
+      });
   } catch (error) {
     response.status(500).send(error);
   }
@@ -250,7 +305,7 @@ app.get('/getAllModules', async (request, response) => {
 
 app.get('/terms/query', async (request, response) => {
   try {
-    termModel.find(
+    TermModel.find(
       { _id: request.query.ObjectId },
     ).setOptions(
       getOption,
@@ -272,6 +327,25 @@ app.get('/submissions/queryByUserAssignment', async (request, response) => {
         assignmentId: request.query.assignmentId,
       },
     ).sort({ lastUpdateDtm: -1 }).setOptions(
+      getOption,
+    ).exec()
+      .then((data) => {
+        if (!data) {
+          response.status(200).send([]);
+        } else response.status(200).send(data);
+      });
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
+app.get('/submissions/queryByUser', async (request, response) => {
+  try {
+    SubmissionModel.find(
+      {
+        userKey: request.query.userKey,
+      },
+    ).setOptions(
       getOption,
     ).exec()
       .then((data) => {

@@ -56,13 +56,14 @@ class App extends Component
                     status: 'DidNotAttempt',
                   });
                 } else {
+                  const formatDate:string = new Date(submission.lastUpdateDtm).toLocaleString();
                   output.push({
                     key: student.id,
                     userId: student.userId,
                     username: student.username,
                     name: student.name,
                     status: submission.status,
-                    lastUpdateDtm: submission.lastUpdateDtm,
+                    lastUpdateDtm: formatDate,
                     score: submission.score,
                     submissionId: submission._id,
                   });
@@ -111,18 +112,18 @@ class App extends Component
         render: (_:any, record:any) => {
           if (record.status !== 'DidNotAttempt') {
             const viewPath = `/viewSubmission/${record.submissionId}`;
-            const testReportPath = `/testReport/${record.submissionId}`;
-            const rawReportPath = `/rawReport/${record.submissionId}`;
+            const testReportPath = `/ViewReport/fromList/${record.submissionId}`;
+            const rawReportPath = `/ViewReportRaw/fromList/${record.submissionId}`;
             return (
               <Space size="small">
                 <Button type="link">
-                  <Link to={viewPath}>View and Run Auto-marker</Link>
+                  <Link to={viewPath}>View Submission / Run Auto-marker</Link>
                 </Button>
                 <Button type="link">
                   <Link to={testReportPath}>Test Report</Link>
                 </Button>
                 <Button type="link">
-                  <Link to={rawReportPath}>Raw Test Result</Link>
+                  <Link to={rawReportPath}>Raw Test Report</Link>
                 </Button>
               </Space>
             );

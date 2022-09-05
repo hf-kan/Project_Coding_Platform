@@ -20,7 +20,7 @@ function MyComponent() {
             Use the menu bar at the top of the screen to start
           </Title>
           <Title level={5}>
-            Currently Supported Coding Language: JAVA
+            All assignments should be completed using Java
           </Title>
         </div>
       </Content>

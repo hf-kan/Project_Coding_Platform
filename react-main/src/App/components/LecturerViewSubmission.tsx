@@ -107,10 +107,6 @@ class App extends Component
     let consoleOutput:string = '';
     return (
       <div>
-        <PageHeader
-          className="site-page-header"
-          title="View Submission"
-        />
         <Layout>
           <Sider width="300" theme="light">
             <Space
@@ -120,6 +116,10 @@ class App extends Component
                 display: 'flex',
               }}
             >
+              <PageHeader
+                className="site-page-header"
+                title="View Submission"
+              />
               <Space direction="vertical">
                 {`Student ID: ${userId}`}
                 {`Student Name: ${name}`}
@@ -130,9 +130,6 @@ class App extends Component
               <h3>
                 {assignmentTitle}
               </h3>
-              <h4>
-                {statusMessage}
-              </h4>
               <TextArea readOnly value={assignmentInstruction} autoSize wrap="soft" />
             </Space>
           </Sider>
@@ -144,7 +141,7 @@ class App extends Component
                   className="code"
                   style={{
                     overflow: 'auto',
-                    height: '15em',
+                    height: '26em',
                   }}
                 >
                   <CodeEditor
@@ -161,11 +158,10 @@ class App extends Component
                       fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                       overflow: 'hidden',
                       boxSizing: 'border-box',
-                      minHeight: '15em',
+                      minHeight: '25em',
                     }}
                   />
                 </div>
-                <br />
                 <div className="submit-panel">
                   <Space>
                     <Button
@@ -227,14 +223,16 @@ class App extends Component
                       <Link to={`/ViewReport/lecturer/${this.submissionDocument._id}`}>View Test Report</Link>
                     </Button>
                     <Button type="primary">
-                      View Raw Test Result
+                      <Link to={`/ViewReportRaw/lecturer/${this.submissionDocument._id}`}>View Raw Test Report</Link>
                     </Button>
                     <Button>
                       <Link to={`/ViewStudentSubmissions/${assignmentId}`}>Go Back to Submission List</Link>
                     </Button>
                   </Space>
                   <br />
-                  <br />
+                  <h4>
+                    {statusMessage}
+                  </h4>
                   Auto-marker run result:
                   <br />
                   <TextArea

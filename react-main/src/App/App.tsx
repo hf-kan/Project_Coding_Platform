@@ -17,6 +17,10 @@ import LecturerViewSubmission from './components/LecturerViewSubmission';
 import AddAssignment from './components/adminAddAssignment';
 import DisplayUser from './components/DisplayUser';
 import TestReport from './components/testReport';
+import TestReportRaw from './components/testReportRaw';
+import AddModule from './components/adminAddModule';
+import AddTerm from './components/adminAddTerm';
+import AddUser from './components/adminAddUser';
 
 const { Header, Content } = Layout;
 
@@ -62,7 +66,7 @@ class App extends Component <Props, { role: string[], userKey: string }> {
                 width: '100%',
               }}
             >
-              <HeadPanel role={role} />
+              <HeadPanel userKey={userKey} role={role} />
             </Header>
           </div>
           <div>
@@ -88,18 +92,26 @@ class App extends Component <Props, { role: string[], userKey: string }> {
                   <Route path="/addAssignment">
                     <AddAssignment />
                   </Route>
-                  <Route path="/student">
-                    <Student {...userProps} />
+                  <Route path="/addModule">
+                    <AddModule />
+                  </Route>
+                  <Route path="/addTerm">
+                    <AddTerm />
+                  </Route>
+                  <Route path="/addUser">
+                    <AddUser />
                   </Route>
                   <Route path="/lecturer">
                     <Lecturer {...userProps} />
                   </Route>
+                  <Route path="/student/:userKey" component={Student} />
                   <Route path="/assignmentList/:userKey/:key" component={StudentListModuleAssignment} />
                   <Route path="/studentAssignment/:userKey/:key" component={StudentAssignment} />
-                  <Route path="/lecturerAssignmentList/:userKey/:key" component={LecturerListModuleAssignment} />
+                  <Route path="/lecturerAssignmentList/:key" component={LecturerListModuleAssignment} />
                   <Route path="/ViewStudentSubmissions/:key" component={LecturerListStudentsSubmissions} />
                   <Route path="/viewSubmission/:key" component={LecturerViewSubmission} />
                   <Route path="/ViewReport/:mode/:key" component={TestReport} />
+                  <Route path="/ViewReportRaw/:mode/:key" component={TestReportRaw} />
                 </Switch>
               </div>
             </Content>
