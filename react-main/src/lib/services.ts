@@ -1,9 +1,11 @@
 import axios from 'axios';
 import qs from 'qs';
 
+const expressServerPath = 'http://localhost:8080';
+
 function getUserId(username:string, callBack:Function) {
   let output:string;
-  axios.get(`http://localhost:8080/getUsersFromName/${username}`)
+  axios.get(`${expressServerPath}/getUsersFromName/${username}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -16,7 +18,7 @@ function getUserId(username:string, callBack:Function) {
 
 function getUserDisplayName(userKey:string, callBack:Function) {
   let output:string;
-  axios.get(`http://localhost:8080/users/${userKey}`)
+  axios.get(`${expressServerPath}/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -29,7 +31,7 @@ function getUserDisplayName(userKey:string, callBack:Function) {
 
 function getUserRole(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${userKey}`)
+  axios.get(`${expressServerPath}/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -41,7 +43,7 @@ function getUserRole(userKey:string, callBack:Function) {
 }
 
 function getUserPersonalInfo(userKey:string, callBack:Function) {
-  axios.get(`http://localhost:8080/users/${userKey}`)
+  axios.get(`${expressServerPath}/users/${userKey}`)
     .then((res) => {
       const user = res.data;
       const data = JSON.parse(JSON.stringify(user));
@@ -57,7 +59,7 @@ function getUserPersonalInfo(userKey:string, callBack:Function) {
 
 function getStudentModules(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${userKey}`)
+  axios.get(`${expressServerPath}/users/${userKey}`)
     .then((res) => {
       const rawData = res.data;
       const data = JSON.parse(JSON.stringify(rawData));
@@ -70,7 +72,7 @@ function getStudentModules(userKey:string, callBack:Function) {
 
 function getStudentsByModule(moduleId:string, callBack:Function) {
   const output:any[] = [];
-  axios.get('http://localhost:8080/getModuleStudents', {
+  axios.get(`${expressServerPath}/getModuleStudents`, {
     params: {
       studentMod: moduleId,
     },
@@ -93,7 +95,7 @@ function getStudentsByModule(moduleId:string, callBack:Function) {
 
 function getLecturerModules(userKey:string, callBack:Function) {
   const output:string[] = [];
-  axios.get(`http://localhost:8080/users/${userKey}`)
+  axios.get(`${expressServerPath}/users/${userKey}`)
     .then((res) => {
       const rawData = res.data;
       const data = JSON.parse(JSON.stringify(rawData));
@@ -105,7 +107,7 @@ function getLecturerModules(userKey:string, callBack:Function) {
 }
 
 function getModulesById(Id: any[], callBack:Function) {
-  axios.get('http://localhost:8080/modules/query', {
+  axios.get(`${expressServerPath}/modules/query`, {
     params: {
       ObjectId: Id,
     },
@@ -119,7 +121,7 @@ function getModulesById(Id: any[], callBack:Function) {
 }
 
 function getTermsById(Id: any[], callBack:Function) {
-  axios.get('http://localhost:8080/terms/query', {
+  axios.get(`${expressServerPath}/terms/query`, {
     params: {
       ObjectId: Id,
     },
@@ -133,7 +135,7 @@ function getTermsById(Id: any[], callBack:Function) {
 }
 
 function getOneModuleAssignments(moduleKey: string, callBack:Function) {
-  axios.get(`http://localhost:8080/assignment/module/${moduleKey}`)
+  axios.get(`${expressServerPath}/assignment/module/${moduleKey}`)
     .then((res) => {
       const rawData = res.data;
       const output = JSON.parse(JSON.stringify(rawData));
@@ -142,7 +144,7 @@ function getOneModuleAssignments(moduleKey: string, callBack:Function) {
 }
 
 function getAssignmentsById(Id: any[], callBack:Function) {
-  axios.get('http://localhost:8080/assignments/query', {
+  axios.get(`${expressServerPath}/assignments/query`, {
     params: {
       ObjectId: Id,
     },
@@ -156,7 +158,7 @@ function getAssignmentsById(Id: any[], callBack:Function) {
 }
 
 function getAssignmentsByIdFiltered(Id: any[], callBack:Function) {
-  axios.get('http://localhost:8080/getAssignmentsBasic/query', {
+  axios.get(`${expressServerPath}/getAssignmentsBasic/query`, {
     params: {
       ObjectId: Id,
     },
@@ -170,7 +172,7 @@ function getAssignmentsByIdFiltered(Id: any[], callBack:Function) {
 }
 
 function getAssignmentsStartEnd(Id: any[], callBack:Function) {
-  axios.get('http://localhost:8080/getAssignmentsStartEnd/query', {
+  axios.get(`${expressServerPath}/getAssignmentsStartEnd/query`, {
     params: {
       ObjectId: Id,
     },
@@ -184,7 +186,7 @@ function getAssignmentsStartEnd(Id: any[], callBack:Function) {
 }
 
 function getSubmissionsByUserAssignment(userKey: any[], assignmentId: any[], callBack:Function) {
-  axios.get('http://localhost:8080/submissions/queryByUserAssignment', {
+  axios.get(`${expressServerPath}/submissions/queryByUserAssignment`, {
     params: {
       userKey,
       assignmentId,
@@ -199,7 +201,7 @@ function getSubmissionsByUserAssignment(userKey: any[], assignmentId: any[], cal
 }
 
 function getSubmissionsByUser(userKey: any[], callBack:Function) {
-  axios.get('http://localhost:8080/submissions/queryByUser', {
+  axios.get(`${expressServerPath}/submissions/queryByUser`, {
     params: {
       userKey,
     },
@@ -213,7 +215,7 @@ function getSubmissionsByUser(userKey: any[], callBack:Function) {
 }
 
 function getSubmissionById(submissionId:string, callBack:Function) {
-  axios.get('http://localhost:8080/submissions/getById', {
+  axios.get(`${expressServerPath}/submissions/getById`, {
     params: {
       submissionId,
     },
@@ -227,7 +229,7 @@ function getSubmissionById(submissionId:string, callBack:Function) {
 }
 
 function getSubmissionsByAssignment(assignmentId: any[], callBack:Function) {
-  axios.get('http://localhost:8080/submissions/queryByAssignment', {
+  axios.get(`${expressServerPath}/submissions/queryByAssignment`, {
     params: {
       assignmentId,
     },
@@ -241,14 +243,14 @@ function getSubmissionsByAssignment(assignmentId: any[], callBack:Function) {
 }
 
 function addSubmission(submission:any, callBack:Function) {
-  axios.post('http://localhost:8080/submissions/add', submission)
+  axios.post(`${expressServerPath}/submissions/add`, submission)
     .then((res) => {
       callBack(res);
     });
 }
 
 function updateSubmission(submission:any, callBack:Function) {
-  axios.patch('http://localhost:8080/submissions/update', submission)
+  axios.patch(`${expressServerPath}/submissions/update`, submission)
     .then((res) => {
       callBack(res);
     });
@@ -258,14 +260,14 @@ function submitSubmission(submission:any, callBack:Function) {
   const toBeSubmitted = submission;
   toBeSubmitted.status = 'Submitted';
   toBeSubmitted.compileError = '';
-  axios.patch('http://localhost:8080/submissions/update', toBeSubmitted)
+  axios.patch(`${expressServerPath}/submissions/update`, toBeSubmitted)
     .then((res) => {
       callBack(res);
     });
 }
 
 function userTestRun(testObject:any, callBack:Function) {
-  axios.post('http://localhost:8080/testRun', testObject)
+  axios.post(`${expressServerPath}/testRun`, testObject)
     .then((res) => {
       callBack(res);
     });
@@ -273,14 +275,14 @@ function userTestRun(testObject:any, callBack:Function) {
 
 function runAutoMarker(submission:any, callBack:Function) {
   const submissionObject:any = { submission };
-  axios.post('http://localhost:8080/runAutoMarker', submissionObject)
+  axios.post(`${expressServerPath}/runAutoMarker`, submissionObject)
     .then((res) => {
       callBack(res);
     });
 }
 
 function getCurrentDateTime(callBack:Function) {
-  axios.get('http://localhost:8080/getCurrentTime')
+  axios.get(`${expressServerPath}/getCurrentTime`)
     .then((res) => {
       const curDate:Date = res.data;
       callBack(curDate);

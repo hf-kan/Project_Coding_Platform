@@ -1,8 +1,6 @@
 react-main/dist
 react-main/node_modules
 react-main/.env
-react-main/RecycleBin
-RecycleBin
 Server/dist
 Server/node_modules
 Server/.env

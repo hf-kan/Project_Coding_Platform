@@ -14,10 +14,10 @@ module.exports = {
     new ReactRefreshWebpackPlugin(),
     [
       'prismjs', {
-      languages: ['javascript', 'css', 'markup', 'java'],
-      plugins: ['line-numbers'],
-      theme: 'twilight',
-      css: true
+        languages: ['javascript', 'css', 'markup', 'java'],
+        plugins: ['line-numbers'],
+        theme: 'twilight',
+        css: true,
       }
     ]
   ],
@@ -73,6 +73,6 @@ module.exports = {
     template: 'index.html',
     hash: true, // Cache busting
     filename: '../dist/index.html',
-  }),  
+  }),
   new webpack.HotModuleReplacementPlugin],
 };

@@ -25,7 +25,7 @@ import AddUser from './components/adminAddUser';
 const { Header, Content } = Layout;
 
 interface Props {
-  accessToken: any,
+  accessToken: any, // Currently unused and reserved for future development
   graphData: any,
 }
 
@@ -41,7 +41,9 @@ class App extends Component <Props, { role: string[], userKey: string }> {
   componentDidMount() {
     const getModuleData = async () => {
       const { graphData } = this.props;
+      console.log(`graph: ${graphData.userPrincipalName}`);
       getUserId(graphData.userPrincipalName, (id:string) => {
+        console.log(`id: ${id}`);
         getUserRole(id, (userRole: string[]) => {
           this.setState({
             role: userRole,

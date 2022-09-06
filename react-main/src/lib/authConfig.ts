@@ -1,4 +1,4 @@
-const clientId = '4aec3e9d-23e5-4fb9-8b40-12e51af94f28';
+const clientId = ''; // intentionally removed
 const authority = 'https://login.microsoftonline.com/common';
 const redirectUri = 'http://localhost:3000';
 const graphMeEndpoint = 'https://graph.microsoft.com/v1.0/me?$select=mail';

@@ -1,21 +1,23 @@
 import axios from 'axios';
 
+const expressServerPath = 'http://localhost:8080';
+
 function addNewModule(module:object, callBack: Function) {
-  axios.post('http://localhost:8080/modules/add', module)
+  axios.post(`${expressServerPath}/modules/add`, module)
     .then((res) => {
       callBack(res);
     });
 }
 
 function addNewAssignment(assignment:object, callBack: Function) {
-  axios.post('http://localhost:8080/assignments/add', assignment)
+  axios.post(`${expressServerPath}/assignments/add`, assignment)
     .then((res) => {
       callBack(res);
     });
 }
 
 function getAllTerm(callback: Function) {
-  axios.get('http://localhost:8080/terms')
+  axios.get(`${expressServerPath}/terms`)
     .then((res) => {
       const term = res.data;
       const output = JSON.parse(JSON.stringify(term));
@@ -24,7 +26,7 @@ function getAllTerm(callback: Function) {
 }
 
 function getAllModules(callback: Function) {
-  axios.get('http://localhost:8080/getAllModules')
+  axios.get(`${expressServerPath}/getAllModules`)
     .then((res) => {
       const term = res.data;
       const output = JSON.parse(JSON.stringify(term));
@@ -33,14 +35,14 @@ function getAllModules(callback: Function) {
 }
 
 function addNewTerm(term:object, callBack: Function) {
-  axios.post('http://localhost:8080/terms/add', term)
+  axios.post(`${expressServerPath}/terms/add`, term)
     .then((res) => {
       callBack(res);
     });
 }
 
 function addNewUser(user:object, callBack: Function) {
-  axios.post('http://localhost:8080/users/add', user)
+  axios.post(`${expressServerPath}/users/add`, user)
     .then((res) => {
       callBack(res);
     });

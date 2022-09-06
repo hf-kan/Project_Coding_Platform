@@ -1,6 +1,5 @@
 import React from 'react';
 import { PageHeader, Typography, Layout } from 'antd';
-// import LoadUpcomingTest from './LoadUpcomingTest';
 
 function MyComponent() {
   const { Content, Footer } = Layout;

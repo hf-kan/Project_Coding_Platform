@@ -1,3 +1,5 @@
+import parseJUnitCDATA from './parseJUnitCDATA';
+
 function parseJUnitReportXML(rawReport:string) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(rawReport, 'text/xml');
@@ -19,27 +21,45 @@ function parseJUnitReportXML(rawReport:string) {
     let message;
     let testCaseName;
     let executionTime;
+    let displayName:string;
     const countForDisplay = i + 1;
     const firstNodeName = immediateChild.nodeName;
     switch (firstNodeName) {
       case 'failure': {
+        const nextChild:any = testCaseNode.childNodes[3];
+        const sysOut:string = nextChild.childNodes[0].nodeValue;
+        displayName = parseJUnitCDATA(sysOut, 'display-name: ');
+        if (displayName === '') {
+          displayName = testCaseNode.getAttribute('name');
+        }
         status = 'failed';
         message = immediateChild.getAttribute('message');
-        testCaseName = testCaseNode.getAttribute('name');
+        testCaseName = displayName;
         executionTime = testCaseNode.getAttribute('time');
         break;
       }
       case 'error': {
+        const nextChild:any = testCaseNode.childNodes[3];
+        const sysOut:string = nextChild.childNodes[0].nodeValue;
+        displayName = parseJUnitCDATA(sysOut, 'display-name: ');
+        if (displayName === '') {
+          displayName = testCaseNode.getAttribute('name');
+        }
         status = 'error';
         message = immediateChild.getAttribute('message');
-        testCaseName = testCaseNode.getAttribute('name');
+        testCaseName = displayName;
         executionTime = testCaseNode.getAttribute('time');
         break;
       }
       case 'system-out': {
+        const sysOut:string = immediateChild.childNodes[0].nodeValue;
+        displayName = parseJUnitCDATA(sysOut, 'display-name: ');
+        if (displayName === '') {
+          displayName = testCaseNode.getAttribute('name');
+        }
         status = 'passed';
         message = '';
-        testCaseName = testCaseNode.getAttribute('name');
+        testCaseName = displayName;
         executionTime = testCaseNode.getAttribute('time');
         break;
       }
