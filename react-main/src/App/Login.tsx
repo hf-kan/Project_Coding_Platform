@@ -4,7 +4,7 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from '@azure/msal-react';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 
 import PageLayout from './components/PageLayout';
 import { loginRequest } from '../lib/authConfig';
@@ -51,13 +51,16 @@ function ProfileContent() {
 }
 
 function Main() {
+  const { Title } = Typography;
   return (
     <PageLayout>
       <AuthenticatedTemplate>
         <ProfileContent />
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <h3>Welcome to UoB Coding Platform. Click the button above to sign in</h3>
+        <Title level={5} style={{ marginLeft: '20px' }}>
+          Welcome to UoB Coding Platform. Click the button above to sign in
+        </Title>
       </UnauthenticatedTemplate>
     </PageLayout>
   );

@@ -11,7 +11,7 @@ import {
   Link,
 } from 'react-router-dom';
 
-import { getStudentModules, getModulesById, getTermsById } from '../../lib/services';
+import { getLecturerModules, getModulesById, getTermsById } from '../../lib/services';
 
 interface Props {
   match: any,
@@ -34,7 +34,7 @@ class App extends Component
       // Get student's enrolled modules, then find details of each module
       // then get each module's term details
       // equivalent to studentmodules inner join modules inner join term
-      getStudentModules((match.params.userKey), (arrayOfLecturerModuleIds:any[]) => {
+      getLecturerModules((match.params.userKey), (arrayOfLecturerModuleIds:any[]) => {
         getModulesById(arrayOfLecturerModuleIds, (arrayOfModules:any[]) => {
           const arrayOfTermIds: any[] = [];
           arrayOfModules.forEach((module:any) => arrayOfTermIds.push(module.term));

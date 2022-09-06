@@ -157,7 +157,7 @@ class App extends Component
         />
         <Space style={{ marginLeft: '20px', minWidth: '1200px' }} size="small" direction="vertical">
           Assignment Name:
-          <Input id="title" value={title} onChange={this.handleChange} placeholder="Assignment Name" allowClear />
+          <Input id="title" value={title} onChange={this.handleChange} placeholder="Enter Assignment Name here" allowClear />
           Module:
           <Input.Group>
             <Select id="module" style={{ minWidth: 500 }} value={module} onChange={this.handleModuleChange} placeholder="Select a module">
