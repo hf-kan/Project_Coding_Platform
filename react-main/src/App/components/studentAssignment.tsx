@@ -11,6 +11,7 @@ import {
   Col,
   Row,
   Popconfirm,
+  Typography,
 } from 'antd';
 
 import {
@@ -307,6 +308,7 @@ class App extends Component
       loading,
     } = this.state;
     const { TextArea } = Input;
+    const { Title, Text } = Typography;
     const assignmentInstruction:string = assignmentDescr;
     const assignmentTitle: string = assignmentName;
 
@@ -395,6 +397,10 @@ class App extends Component
       <div>
         <Layout>
           <Sider width="300" theme="light">
+            <PageHeader
+              className="site-page-header"
+              title="Assignment (Java)"
+            />
             <Space
               direction="vertical"
               size="middle"
@@ -402,16 +408,12 @@ class App extends Component
                 display: 'flex',
               }}
             >
-              <PageHeader
-                className="site-page-header"
-                title="Assignment (Java)"
-              />
-              <h3>
+              <Title level={5}>
                 {assignmentTitle}
-              </h3>
-              <h4>
+              </Title>
+              <Text strong>
                 {statusMessage}
-              </h4>
+              </Text>
               <Button type="primary" hidden={hideReportButton}>
                 <Link to={`/ViewReport/student/${match.params.userKey}/${this.submissionDocument._id}`}>View Test Report</Link>
               </Button>

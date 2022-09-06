@@ -17,7 +17,7 @@ function MyComponent() {
           <br />
           <br />
           <Title level={5}>
-            Use the menu bar at the top of the screen to start
+            For Students: Click on Student at the menu at the top of the screen to start
           </Title>
           <Title level={5}>
             All assignments should be completed using Java

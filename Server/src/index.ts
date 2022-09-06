@@ -4,7 +4,7 @@ import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { promisify } from 'util';
-import { exec, execSync } from 'child_process';
+import { exec } from 'child_process';
 import fs from 'fs';
 import xml2js from 'xml2js';
 
